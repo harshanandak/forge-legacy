@@ -46,9 +46,9 @@ The inspected tracked ref was `origin/master` (**7d448ec812ef8639790477af07c3c75
 
 Remote freshness remains **unverified**: `git ls-remote origin refs/heads/master` failed while trying to connect to `127.0.0.1:9`. Node child-process calls also encountered `spawnSync git EPERM`; direct shell Git reads succeeded. No network or sandbox restriction was bypassed. [ran]
 
-The July memo is absent at its supplied path in the inspected tracked ref. The explicitly supplied historical file at [decision.md](/docs/work/2026-07-12-rust-vs-js-decision/decision.md) was read as a prior decision input. Its historical source counts, startup figures, binary sizes, and assertions about agent proficiency are **not treated as current measurements**. [read/ran]
+The July memo is absent at its supplied path in the inspected tracked ref. The explicitly supplied historical file at `docs/work/2026-07-12-rust-vs-js-decision/decision.md` (untracked, not in repo) was read as a prior decision input. Its historical source counts, startup figures, binary sizes, and assertions about agent proficiency are **not treated as current measurements**. [read/ran]
 
-[P10-typescript-types.md](/docs/work/2026-09-30-forge-final-plan/platform/P10-typescript-types.md), the platform plan’s decision 33, and [north-star.md](/docs/work/2026-09-30-forge-final-plan/north-star.md:38) were read as planning inputs. North-star items 16–17 explicitly call for device memory, cross-project work, cross-device synchronization, and a language decision grounded in runtime efficiency. [read]
+[P10-typescript-types.md](/docs/work/2026-09-30-forge-final-plan/platform/P10-typescript-types.md), the platform plan’s decision 33, and [north-star.md](../north-star.md) (line 38) were read as planning inputs. North-star items 16–17 explicitly call for device memory, cross-project work, cross-device synchronization, and a language decision grounded in runtime efficiency. [read]
 
 Only scratch measurement scripts and results were written by this leg. No commits, pushes, GitHub writes, Kernel mutations, browser sessions, or context-mode calls were executed. No implementation or release validation is claimed.
 
@@ -76,7 +76,7 @@ Memory trials used a preload that captured `process.resourceUsage().maxRSS` imme
 
 Uninstrumented help latency was measured separately. That separation matters: the differences between measurement passes are too large and inconsistent to interpret as preload overhead.
 
-The retained aggregate is [p13-evidence.json](/docs/work/2026-09-30-forge-final-plan/.scratch/p13-evidence.json). The harness and probe are [p13-run.ps1](/docs/work/2026-09-30-forge-final-plan/.scratch/p13-run.ps1) and [p13-probe.cjs](/docs/work/2026-09-30-forge-final-plan/.scratch/p13-probe.cjs).
+The retained aggregate is `p13-evidence.json` (local `.scratch`, not in repo). The harness and probe are `p13-run.ps1` (local `.scratch`, not in repo) and `p13-probe.cjs` (local `.scratch`, not in repo).
 
 ### Actual safe invocation paths — five trials each
 
@@ -109,7 +109,7 @@ Its synthetic stdin was:
 {"tool_input":{"file_path":"README.md"}}
 ```
 
-This exercises the native guard’s argument, input, configuration, and path-decision path without executing an edit or commit. It does **not** measure a Git-backed TDD check, a complete harness hook chain, or a session-start hook. [read/ran: [forge-native-hook.js](/.forge/hooks/forge-native-hook.js:401)]
+This exercises the native guard’s argument, input, configuration, and path-decision path without executing an edit or commit. It does **not** measure a Git-backed TDD check, a complete harness hook chain, or a session-start hook. [read/ran: [forge-native-hook.js](../../../../.forge/hooks/forge-native-hook.js#L401)]
 
 Time measured **after preload initialization** was:
 
@@ -132,7 +132,7 @@ The no-Kernel-mutation instruction takes precedence over the general suggestion 
 | `forge recap <id>` | A successful issue recap attempts to record `context.loaded`. [read] |
 | `forge recall <q>` | The inspected handler can record recall-usage evidence; its store initialization also requires care under the mutation restriction. [read] |
 
-The source anchors are [cli-broker-factory.js](/lib/kernel/cli-broker-factory.js:108), [recap.js](/lib/commands/recap.js:56), and the inspected commands:
+The source anchors are [cli-broker-factory.js](../../../../lib/kernel/cli-broker-factory.js#L108), [recap.js](../../../../lib/commands/recap.js#L56), and the inspected commands:
 
 ```text
 git show origin/master:lib/commands/_resolve-command-opts.js
@@ -175,9 +175,9 @@ A separate Node help trial instrumented `Module._load`, recording inclusive time
 
 The three disjoint direct roots—registry, command options, and documentation command—account for approximately **297 ms, or 74%**, of that entry-load sample. [ran]
 
-The important finding is **eager dependency placement**, rather than one dominant application algorithm. The entry point loads documentation and setup-related modules before handling ordinary help. [read: [bin/forge.js](/bin/forge.js:56); ran]
+The important finding is **eager dependency placement**, rather than one dominant application algorithm. The entry point loads documentation and setup-related modules before handling ordinary help. [read: [bin/forge.js](../../../../bin/forge.js#L56); ran]
 
-The generated lazy command manifest already exists. Recommending its creation again would repeat completed work. The next optimization should target the remaining eager bootstrap and dependency edges while preserving extension discovery and command behavior. [read: [registry source](/lib/commands/_registry.js:15); inferred]
+The generated lazy command manifest already exists. Recommending its creation again would repeat completed work. The next optimization should target the remaining eager bootstrap and dependency edges while preserving extension discovery and command behavior. [read: [registry source](../../../../lib/commands/_registry.js#L15); inferred]
 
 Bun populated the cache inventory, but the `Module._load` interception recorded **zero calls**. Therefore **no Bun per-module timing breakdown is claimed**. Its compatible cache inventory is useful; the same instrumentation hook was ineffective for timing. [ran]
 
@@ -197,7 +197,7 @@ The inspected runtime manifest declares three dependencies: **`@babel/parser`, `
 
 Directory sizes include package contents, not merely executable JS. The three-directory sum excludes separately installed transitive packages. `cross-spawn` was not present in the profiled help cache. [ran]
 
-The first bounded installation traversal was incomplete. A second directory enumeration returned **172,254 entries after 191,077 ms**, exceeding its budget before file sizes could be accumulated. Its reported zero bytes means **no completed byte census**, not an empty installation. See [p13-node-modules-size.json](/docs/work/2026-09-30-forge-final-plan/.scratch/p13-node-modules-size.json). [ran]
+The first bounded installation traversal was incomplete. A second directory enumeration returned **172,254 entries after 191,077 ms**, exceeding its budget before file sizes could be accumulated. Its reported zero bytes means **no completed byte census**, not an empty installation. See `p13-node-modules-size.json` (local `.scratch`, not in repo). [ran]
 
 Installed disk size, loaded source bytes, and resident memory are different quantities. The entire development dependency tree is not loaded into every Forge process. [inferred]
 

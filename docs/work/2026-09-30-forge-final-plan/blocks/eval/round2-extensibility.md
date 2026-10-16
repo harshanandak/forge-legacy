@@ -23,7 +23,7 @@ This verdict concerns the proposed architecture and its stated limits. It does n
 
 ## Evidence convention
 
-“Draft” means the supplied local [blocks-plan-v2.md](/docs/work/2026-09-30-forge-final-plan/blocks/blocks-plan-v2.md:1), not tracked product behavior. Product-source references below were inspected with `git show origin/master:<path>` at `7d448ec812ef8639790477af07c3c75962173f8a`. `[read]` and `[external]` mean rung 2 source inspection; `[ran]` identifies an executed command or readback; `[inferred]` identifies a design judgment. Live GitHub readbacks are rung 5 for that metadata only. Research-leg results are supporting material, not tests executed by this critic.
+“Draft” means the supplied local [blocks-plan-v2.md](../blocks-plan-v2.md) (line 1), not tracked product behavior. Product-source references below were inspected with `git show origin/master:<path>` at `7d448ec812ef8639790477af07c3c75962173f8a`. `[read]` and `[external]` mean rung 2 source inspection; `[ran]` identifies an executed command or readback; `[inferred]` identifies a design judgment. Live GitHub readbacks are rung 5 for that metadata only. Research-leg results are supporting material, not tests executed by this critic.
 
 ## Assessment through the assigned lens
 

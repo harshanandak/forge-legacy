@@ -262,7 +262,7 @@ The Promise registration signature is domain.transform(callback:(draft)=>Promise
 | catalog.transform | CatalogDraft.provider: list/get/update/remove(providerID); each CatalogProviderRecord has provider:ProviderV2Info and models:ReadonlyMap<string,ModelV2Info>. CatalogDraft.model: get/update/remove(providerID,modelID), default.get():{providerID,modelID}-or-undefined, default.set(providerID,modelID). |
 | command.transform | CommandDraft: list():readonly CommandV2Info[], get(name), update(name,fn(command)), remove(name). |
 | integration.transform | IntegrationDraft: list/get/update/remove(id) for IntegrationRef; method.list(integrationID), method.update(registration), method.remove(integrationID,method). Registrations are {integrationID,method:IntegrationKeyMethod-or-IntegrationEnvMethod} or an OAuth registration described below. |
-| reference.transform | ReferenceDraft: add(name,ReferenceLocalSource-or-ReferenceGitSource), remove(name), list():readonly [name,source][] tuples. |
+| reference.transform | ReferenceDraft: add(name,ReferenceLocalSource-or-ReferenceGitSource), remove(name), list(): `readonly [name,source][]` tuples. |
 | skill.transform | SkillDraft: source(SkillV2Source), list():readonly SkillV2Source[]. |
 
 All named domain records are pinned SDK v2 types. The registration callback mutates its draft and returns void, rather than returning a new catalog. [external: registration][v2registration] [external: agent draft][v2agent] [external: catalog draft][v2catalog] [external: command draft][v2command] [external: integration draft][v2integration] [external: reference draft][v2reference] [external: skill draft][v2skill]

@@ -317,9 +317,9 @@ Bootstrap needs no special path: on a fresh machine with no config, the catalog 
 
 | Thing | Form | Characters | Example (ours) | Example (outside) |
 | --- | --- | --- | --- | --- |
-| Publisher | reverse-DNS labels | `[a-z][a-z0-9-]*` labels joined by `.` | `forge` (reserved) | `io.github.alice`, `com.acme` |
-| Block ID | `<publisher>/<name>` | name: `[a-z][a-z0-9-]{1,30}` | `forge/work` | `io.github.alice/semver` |
-| Noun | one segment | `[a-z][a-z0-9-]{1,20}`, no leading or trailing `-`, no `--` | `issue` | `semver` |
+| Publisher | reverse-DNS labels | `^[a-z][a-z0-9-]*$` labels joined by `.` | `forge` (reserved) | `io.github.alice`, `com.acme` |
+| Block ID | `<publisher>/<name>` | name: `^[a-z][a-z0-9-]{1,30}$` | `forge/work` | `io.github.alice/semver` |
+| Noun | one segment | `^[a-z][a-z0-9-]{1,20}$`, no leading or trailing `-`, no `--` | `issue` | `semver` |
 | Verb | one segment | same | `claim` | `bump` |
 | Operation (public address) | `<noun>.<verb>` | | `issue.claim` | `semver.bump` |
 | Capability / permission key | `<blockId>.<noun>@<iface-semver>#<verb>` | | `forge/work.issue@1.0.0#claim` | `io.github.alice/semver.semver@1.0.0#bump` |

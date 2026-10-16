@@ -23,7 +23,7 @@ This is design acceptance through the assigned lens. Installed platform behavior
 
 ## Evidence and independent checks
 
-**Inputs.** Read common.md, the owner north star, critic.md and the complete 1,012-line draft. The north star controls conflicting product framing. `D:<lines>` below means [platform-plan-v3.md](/docs/work/2026-09-30-forge-final-plan/platform/platform-plan-v3.md:1); `N:<lines>` means [north-star.md](/docs/work/2026-09-30-forge-final-plan/north-star.md:1). [read]
+**Inputs.** Read common.md, the owner north star, critic.md and the complete 1,012-line draft. The north star controls conflicting product framing. `D:<lines>` below means [platform-plan-v3.md](../platform-plan-v3.md) (line 1); `N:<lines>` means [north-star.md](../../north-star.md) (line 1). [read]
 
 **Source snapshot, checked October 1, 2026.** `git rev-parse origin/master` and `git ls-remote origin refs/heads/master` both returned `7d448ec812ef8639790477af07c3c75962173f8a`, matching D:20. All repository inspections below used `git show origin/master:<path>`, rather than this worktree's local branch. [ran: ref/object readback, not runtime conformance]
 

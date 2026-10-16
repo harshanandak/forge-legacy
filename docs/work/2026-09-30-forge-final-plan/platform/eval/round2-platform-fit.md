@@ -15,7 +15,7 @@
 
 **NEEDS-REVISION:** keep the minimal platform architecture and its proposed staging, but make every decision default traceable to evidence, rejected alternatives and a condition that would change the recommendation. [inferred]
 
-This evaluates [platform-plan-v2.md](/docs/work/2026-09-30-forge-final-plan/platform/platform-plan-v2.md:1), read in full, against the [owner north star](/docs/work/2026-09-30-forge-final-plan/north-star.md:1). The north star overrides conflicting framing in `(local scratch)`. Output/severity requirements come from `(local scratch)`. Research consulted: P3-marketplace-cloud and the round-one platform critique/revision log. [read]
+This evaluates [platform-plan-v2.md](../platform-plan-v2.md) (line 1), read in full, against the [owner north star](../../north-star.md) (line 1). The north star overrides conflicting framing in `(local scratch)`. Output/severity requirements come from `(local scratch)`. Research consulted: P3-marketplace-cloud and the round-one platform critique/revision log. [read]
 
 **Evidence boundary:** [read] is source/artifact inspection, rung 2; [ran] identifies an executed readback and proves only its returned state; [inferred] is design judgment or a future failure scenario. Source-reading commands do not establish runtime conformance. No package installation, outside-author trial, native harness invocation, cloud/hosting operation or security campaign was run. [ran]
 
@@ -25,7 +25,7 @@ The checked remote master is `7d448ec812ef8639790477af07c3c75962173f8a`; `git re
 
 ### 1. The twelve defaults are choices without complete decision reasoning
 
-**Claim/section:** Section 10 presents twelve defaults and an overall “A for all twelve.” See [owner decisions](/docs/work/2026-09-30-forge-final-plan/platform/platform-plan-v2.md:742). Earlier architecture, risk and scope sections provide useful supporting constraints, but the decision list does not give each default's evidence-to-choice argument, explain rejection of its alternatives, and state what would change the answer. [read: draft:78–345,667–700,744–759]
+**Claim/section:** Section 10 presents twelve defaults and an overall “A for all twelve.” See [owner decisions](../platform-plan-v2.md) (line 742). Earlier architecture, risk and scope sections provide useful supporting constraints, but the decision list does not give each default's evidence-to-choice argument, explain rejection of its alternatives, and state what would change the answer. [read: draft:78–345,667–700,744–759]
 
 **What's wrong:** The critic explicitly makes an unreasoned decision default blocking. Listing alternatives and describing their extra work is not the full comparison the owner requested. “Minimal complete platform” explains a general preference; it does not justify a particular experiment budget, release sequence, operator commissioning choice or cloud/hosting timetable. Some defaults have substantial partial reasoning elsewhere, especially trust, source identity and authority. That does not satisfy all three required elements for each of the twelve choices. [read: critic.md:12; inferred]
 

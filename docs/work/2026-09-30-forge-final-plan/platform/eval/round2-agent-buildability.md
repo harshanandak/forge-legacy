@@ -19,9 +19,9 @@
 
 | Key | Directly inspected evidence |
 | --- | --- |
-| **D** | [platform-plan-v2.md](/docs/work/2026-09-30-forge-final-plan/platform/platform-plan-v2.md:1), read in full. Line references below address this local planning artifact. |
-| **N** | [north-star.md](/docs/work/2026-09-30-forge-final-plan/north-star.md:7), read in full. |
-| **Brief** | [common.md](/(local scratch)) and [critic.md](/(local scratch)), read in full; only this evaluation may be written. |
+| **D** | [platform-plan-v2.md](../platform-plan-v2.md) (line 1), read in full. Line references below address this local planning artifact. |
+| **N** | [north-star.md](../../north-star.md) (line 7), read in full. |
+| **Brief** | common.md (local scratch, not in repo) and critic.md (local scratch, not in repo), read in full; only this evaluation may be written. |
 | **S1** | [Remote package.json](https://github.com/harshanandak/forge/blob/7d448ec812ef8639790477af07c3c75962173f8a/package.json#L1): parsed the complete tracked file. `main`, `exports` and `types` are absent; `engines.node` is `>=24.0.0`. This confirms proposed installed entries/types still need work, as D already admits. |
 | **S2** | [Remote SkillRuntime](https://github.com/harshanandak/forge/blob/7d448ec812ef8639790477af07c3c75962173f8a/lib/flow/src/skill-runtime.js#L3): structural/byte limits 3–49; invocation preparation 116–142; handler bridge 177–205; result validation 230–259; non-increasable ceilings 296–306. |
 | **S3** | [Remote Memory registry](https://github.com/harshanandak/forge/blob/7d448ec812ef8639790477af07c3c75962173f8a/lib/memory-core/src/backend-registry.js#L45): synchronous methods 45–50; local/enrichment handling 73–82; operation result `{value,receipt}` 113–154. Also inspected Memory index exports 319–331. |

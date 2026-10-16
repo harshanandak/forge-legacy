@@ -235,7 +235,7 @@ All dispositions below are recommendations [inferred], grounded in N and the ins
 
 ### Easy-control cut ledger — C1–C19
 
-[read: P15 §2; inferred marginal allocation] Adopted provisionally, not implementation approval. P15’s P: references point to the pre-round7 plan preserved in [the backup](../.backups/platform-plan-final.pre-round7.md). Repeated cuts earn no extra saving; C8–C19 are mostly already-staged/rejected work.
+[read: P15 §2; inferred marginal allocation] Adopted provisionally, not implementation approval. P15’s P: references point to the pre-round7 plan preserved in the backup (`.backups/platform-plan-final.pre-round7.md`, local, not in repo). Repeated cuts earn no extra saving; C8–C19 are mostly already-staged/rejected work.
 
 | Cut | Disposition / scope removed | Agent-days saved | Maintainer time saved | Risk / add-back trigger |
 | --- | --- | ---: | ---: | --- |
