@@ -478,7 +478,7 @@ describe('CI Workflow Configuration', () => {
     test('Tests runs on every pull request: no top-level PR paths filter', () => {
       expect(triggers).toHaveProperty('pull_request');
       expect(triggers.pull_request.paths).toBeUndefined();
-      expect(triggers.pull_request.types).toContain('edited');
+      expect(triggers.pull_request.types).toEqual(['opened', 'synchronize', 'reopened', 'ready_for_review']);
     });
 
     test('the classifier publishes tests_relevant and fails safe to true', () => {

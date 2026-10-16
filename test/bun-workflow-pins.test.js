@@ -120,7 +120,8 @@ describe('Forge-owned Bun workflow pins', () => {
 	test('derives one exact stable Bun version and rewrites only allowlisted pin fields', () => {
 		expect(readPinnedBunVersion('{"packageManager":"bun@1.4.2"}')).toBe('1.4.2');
 		expect(() => readPinnedBunVersion('{"packageManager":"bun@latest"}')).toThrow('exact stable');
-		expect(BUN_WORKFLOW_SPECS).toHaveLength(6);
+		expect(BUN_WORKFLOW_SPECS).toHaveLength(7);
+		expect(BUN_WORKFLOW_SPECS).toContainEqual({ path: '.github/workflows/pr-title.yml', key: 'bun-version', count: 1 });
 		expect(BUN_WORKFLOW_SPECS.every(Object.isFrozen)).toBe(true);
 		expect(BUN_WORKFLOW_SPECS.some(spec => spec.path.endsWith('npm-publish.yml'))).toBe(false);
 		expect(BUN_WORKFLOW_SPECS.some(spec => spec.path.endsWith('test.yml'))).toBe(false);

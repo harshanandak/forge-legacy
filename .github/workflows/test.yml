@@ -20,7 +20,7 @@ on:
   # one workflow. The `changes` job decides whether the PR is test-relevant and the
   # expensive lanes skip themselves when it is not.
   pull_request:
-    types: [opened, synchronize, reopened, edited, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review]
   merge_group:
   workflow_dispatch:
     inputs:
@@ -959,10 +959,6 @@ jobs:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
         run: node scripts/check-repository-outcomes.js "$BASE_SHA" "$HEAD_SHA"
-      - name: Check conventional PR title
-        env:
-          PR_TITLE: ${{ github.event.pull_request.title }}
-        run: printf '%s\n' "$PR_TITLE" | bun x --no-install commitlint
 
   ci-gate:
     # Single aggregate status for the whole Tests workflow and the one Tests

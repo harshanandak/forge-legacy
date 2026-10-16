@@ -17,14 +17,26 @@ describe('repository CI outcomes', () => {
     }
   });
 
-  test('required CI Gate includes PR outcomes and title edits rerun the workflow', () => {
+  test('required CI Gate includes repository outcomes without rerunning Tests on edits', () => {
     const workflow = YAML.parse(fs.readFileSync(path.join(__dirname, '../.github/workflows/test.yml'), 'utf8'));
     const job = workflow.jobs['repository-outcomes'];
     expect(workflow.jobs['ci-gate'].needs).toContain('repository-outcomes');
     expect(workflow.jobs['ci-gate'].steps[0].env.RESULTS).toContain('needs.repository-outcomes.result');
     expect(job.steps.some(step => step.run === 'bun install --frozen-lockfile')).toBe(true);
-    expect(job.steps.some(step => step.env?.PR_TITLE && step.run.includes('commitlint'))).toBe(true);
-    expect(workflow.on.pull_request.types).toContain('edited');
+    expect(job.steps.some(step => step.env?.PR_TITLE)).toBe(false);
+    expect(workflow.on.pull_request.types).toEqual(['opened', 'synchronize', 'reopened', 'ready_for_review']);
+  });
+
+  test('title edits run an independent conventional-title check', () => {
+    const workflow = YAML.parse(fs.readFileSync(path.join(__dirname, '../.github/workflows/pr-title.yml'), 'utf8'));
+    const testsWorkflow = YAML.parse(fs.readFileSync(path.join(__dirname, '../.github/workflows/test.yml'), 'utf8'));
+    expect(workflow.on.pull_request.types).toEqual(['opened', 'edited', 'synchronize', 'reopened']);
+    expect(workflow.permissions).toEqual({ contents: 'read' });
+    expect(workflow.concurrency.group).not.toBe(testsWorkflow.concurrency.group);
+    const job = workflow.jobs['pr-title'];
+    expect(job.steps.some(step => step.run === 'bun install --frozen-lockfile')).toBe(true);
+    expect(job.steps.some(step => step.env?.PR_TITLE === '${{ github.event.pull_request.title }}'
+      && step.run === "printf '%s\\n' \"$PR_TITLE\" | bun x --no-install commitlint")).toBe(true);
   });
 
   test('a changed mirror fails and a matching mirror passes without rewriting it', () => {
