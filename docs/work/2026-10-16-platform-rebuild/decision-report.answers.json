@@ -1,0 +1,167 @@
+{
+  "report": "decision-report.html",
+  "fingerprint": "17ceafc",
+  "savedAt": "2026-10-16T15:58:59.906Z",
+  "answer": "Decisions: 3A(note: most agents aleeday uses tool search) 8B(note: test need to be focused on e2e sucess rather then just writing tests) — all others default",
+  "picks": {
+    "1": "A",
+    "2": "A",
+    "3": "A",
+    "4": "A",
+    "5": "A",
+    "7": "A",
+    "8": "B",
+    "9": "A",
+    "10": "A",
+    "11": "A",
+    "12": "A",
+    "13": "A",
+    "14": "A",
+    "15": "A",
+    "17": "A",
+    "18": "B",
+    "19": "A"
+  },
+  "notes": {
+    "3": "most agents aleeday uses tool search",
+    "8": "test need to be focused on e2e sucess rather then just writing tests"
+  },
+  "decisions": [
+    {
+      "n": 1,
+      "title": "Plain names for the building blocks",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 2,
+      "title": "Command shape",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 3,
+      "title": "How many Forge tools agents see through MCP",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": "most agents aleeday uses tool search"
+    },
+    {
+      "n": 4,
+      "title": "Command-line output: machine-first or human-first",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 5,
+      "title": "Config file format",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 7,
+      "title": "Local git hook help (always opt-in)",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 8,
+      "title": "An optional 'the new tests catch the bug' check in our delivery template",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": "test need to be focused on e2e sucess rather then just writing tests"
+    },
+    {
+      "n": 9,
+      "title": "File format for blocks other people write",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 10,
+      "title": "What the first working end-to-end slice proves",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 11,
+      "title": "Minimum Node version for users",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 12,
+      "title": "How releases are cut and published",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 13,
+      "title": "Single-file binary downloads",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 14,
+      "title": "Automatic re-running of failed CI checks",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 15,
+      "title": "Mutation testing in our repo",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 17,
+      "title": "Is curapod part of the must-migrate set?",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 18,
+      "title": "What to do with the old Forge backlog",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 19,
+      "title": "How many lanes run at once",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    }
+  ]
+}
