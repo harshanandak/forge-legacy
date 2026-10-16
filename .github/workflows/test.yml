@@ -20,6 +20,7 @@ on:
   # one workflow. The `changes` job decides whether the PR is test-relevant and the
   # expensive lanes skip themselves when it is not.
   pull_request:
+    types: [opened, synchronize, reopened, edited, ready_for_review]
   merge_group:
   workflow_dispatch:
     inputs:
@@ -744,14 +745,6 @@ jobs:
           key: bun-${{ runner.os }}-${{ steps.setup-bun.outputs.bun-version }}-${{ hashFiles('bun.lock') }}
       - name: Install dependencies
         run: bun install
-      - name: Install Git hooks
-        # The protected-state pre-commit hook must run on the bump commit; fail
-        # closed rather than commit without it.
-        shell: bash
-        run: |
-          node_modules/.bin/lefthook install
-          test -s .git/hooks/pre-commit
-          grep -q lefthook .git/hooks/pre-commit
       - name: Resolve latest stable Bun
         id: bun-release
         shell: bash
@@ -947,6 +940,30 @@ jobs:
       - name: Run doc-asserting suites for changed markdown
         run: node scripts/doc-asserting-tests.js --base ${{ github.event.pull_request.base.sha }}
 
+  repository-outcomes:
+    name: Repository outcomes
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
+        with:
+          bun-version: 1.4.2
+      - run: bun install --frozen-lockfile
+      - name: Check changed repository outcomes
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node scripts/check-repository-outcomes.js "$BASE_SHA" "$HEAD_SHA"
+      - name: Check conventional PR title
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: printf '%s\n' "$PR_TITLE" | bun x --no-install commitlint
+
   ci-gate:
     # Single aggregate status for the whole Tests workflow and the one Tests
     # context required in branch protection. Tests runs on every PR, so this job
@@ -968,6 +985,7 @@ jobs:
       - coverage
       - e2e
       - doc-assertions
+      - repository-outcomes
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -975,6 +993,7 @@ jobs:
         shell: bash
         env:
           RESULTS: |
+            repository-outcomes=${{ needs.repository-outcomes.result }}:${{ github.event_name != 'pull_request' }}
             changes=${{ needs.changes.result }}:false
             full-matrix=${{ needs.full-matrix.result }}:${{ needs.changes.outputs.tests_relevant == 'false' || needs.changes.outputs.os_sensitive == 'false' }}
             unit-shard=${{ needs.unit-shard.result }}:${{ github.event_name != 'pull_request' || needs.changes.outputs.tests_relevant == 'false' }}

@@ -91,15 +91,15 @@ describe('canonical test workflow renderer', () => {
 		const current = fs.readFileSync(path.join(repoRoot, TEST_WORKFLOW_PATH));
 		const version = /^bun@(\d+\.\d+\.\d+)$/.exec(require('../package.json').packageManager)[1];
 
-		expect(template.toString('utf8').split(BUN_VERSION_PLACEHOLDER)).toHaveLength(9);
+		expect(template.toString('utf8').split(BUN_VERSION_PLACEHOLDER)).toHaveLength(10);
 		expect(() => YAML.parse(template.toString('utf8'))).not.toThrow();
 		expect(renderTestWorkflow(template, version)).toEqual(current);
 	});
 
 	test('rejects invalid versions and templates with the wrong placeholder count', () => {
 		expect(() => renderTestWorkflow(`bun-version: ${BUN_VERSION_PLACEHOLDER}\n`, 'latest')).toThrow('exact stable');
-		expect(() => renderTestWorkflow('name: no-token\n', '1.4.2')).toThrow('exactly 8');
-		expect(() => renderTestWorkflow(BUN_VERSION_PLACEHOLDER.repeat(9), '1.4.2')).toThrow('exactly 8');
+		expect(() => renderTestWorkflow('name: no-token\n', '1.4.2')).toThrow('exactly 9');
+		expect(() => renderTestWorkflow(BUN_VERSION_PLACEHOLDER.repeat(10), '1.4.2')).toThrow('exactly 9');
 	});
 
 	test('preserves the original deep-import marker name as an alias', () => {

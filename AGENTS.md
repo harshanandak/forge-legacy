@@ -149,40 +149,11 @@ quarantined and an issue filed — never retried until green. Register it in
 }
 ```
 
-## Git Hooks & Push Workflow (Automatic Enforcement)
+## Git hooks in consumer projects
 
-This project uses the **Professional Git Workflow** with Lefthook for automated quality gates.
-
-**Pre-commit hook enforces TDD:**
-- Blocks commits if source code modified without test files
-- Offers guided recovery (add tests now, skip with tech debt tracking, emergency override)
-- No AI decision required - automatic validation
-- **Strong default, not a hard floor.** The TDD gate is the default-ON `rail.tdd_intent` rail; turn it off with `forge gate disable rail.tdd_intent` (the `minimal` adoption profile ships it off). The installed hooks read the resolved config at run time, so a disabled rail makes them genuinely inert — enforcement honestly follows your config.
-- **Defers to a gate you already have.** If your repo already runs a TDD / source-test coupling check on pre-commit (any runner: lefthook, husky, the `pre-commit` framework, a raw `.git/hooks/pre-commit`), `forge setup` detects it, does **not** install a second gate on the same commit, turns `rail.tdd_intent` off, and says so. Prefer Forge's gate? Remove yours and run `forge gate enable rail.tdd_intent` — an explicit setting is never overwritten by a later setup.
-
-**Pre-push hook validates tests:**
-- Branch protection: blocks direct push to `main`/`master`
-- ESLint: blocks on errors and warnings (strict mode, `--max-warnings 0`)
-- All tests must pass before push
-- Can skip for hotfixes with documentation
-
-**Pull Request workflow:**
-- PR template auto-fills with a standardized format; the self-review checklist catches most bugs before review
-- Reference the issue id in the PR body (e.g. the Forge Kernel issue id); **all review comments must be resolved** before merge
-- Squash-only merging for a clean, linear history
-
-**⚠️ AI agents must NEVER use `LEFTHOOK=0`, `--no-verify`, or any hook bypass.** If a hook fails, fix the underlying issue. Only humans may bypass hooks in emergencies, documented in the PR description.
-
-**Preferred push workflow (AI agents and humans):**
-
-```bash
-forge push                    # Branch protection + lint + tests, then push
-forge push --quick            # Review-cycle: lint-only end to end (the pre-push hook's test job is skipped too; CI runs the full suite)
-forge worktree create <slug>  # Create a worktree
-forge test                    # Run tests with correct timeouts
-forge sync                    # Sync issue data
-forge clean                   # Remove merged worktrees
-```
+Consumer setup still installs local git hooks in this release. Never bypass hooks
+that remain installed. Forge repository contributors follow the USER block below:
+CI is the gate for this repository.
 
 ## Build, Shell, and MCP
 
@@ -340,8 +311,8 @@ runtime rail. Turn it off only deliberately: `forge gate disable rail.kernel_tra
 - **Scope discipline**: Do ONLY what was explicitly asked. Answer a question → stop. Check something → stop. Never auto-continue to next steps or pending work unless told to.
 - **Stage names**: The validation stage command is `/validate` — renamed in PR #50; do not use the old name.
 - **Unused params**: Prefix with `_` (e.g., `_searchTerm`) — ESLint `no-unused-vars` enforced with `--max-warnings 0`.
-- **Pre-push test env**: `test-env/` fixture tests can fail during actual `git push` due to git mid-push state. Fix the root cause — never use `LEFTHOOK=0`.
-- **Skill sync**: Canonical skills live in `skills/<name>/SKILL.md`; per-agent copies are generated from them. `.agents/skills` (Codex's repo-local discovery path) is committed so a fresh clone gets discovery without `forge setup` — a pre-commit hook keeps it byte-identical to `skills/` and the drift gate enforces it. The other mirrors (`.claude/skills`, `.codex/skills`, `.cursor/skills`, `.hermes/skills`) are gitignored and regenerated at `forge setup`. Never hand-edit a generated mirror — edit the canonical `skills/` source.
+- **CI fixtures**: `test-env/` fixture tests run in CI; keep them independent of local git push state.
+- **Skill sync**: Canonical skills live in `skills/<name>/SKILL.md`; per-agent copies are generated from them. `.agents/skills` (Codex's repo-local discovery path) is committed so a fresh clone gets discovery without `forge setup` — PR CI checks parity with `skills/`; regenerate explicitly with the owning sync command. The other mirrors (`.claude/skills`, `.codex/skills`, `.cursor/skills`, `.hermes/skills`) are gitignored and regenerated at `forge setup`. Never hand-edit a generated mirror — edit the canonical `skills/` source.
 - **Skill invocation metadata**: Canonical skill frontmatter may declare `invocation: model|user`; omission means `model`. Only `ship`, `review`, and `rollback` are currently user-invoked. Keep the field harness-neutral and preserve it byte-identically in every generated mirror.
 
 ## Session Completion
@@ -372,3 +343,23 @@ runtime rail. Turn it off only deliberately: `forge gate disable rail.kernel_tra
 - After fixing review feedback, always push the changes and resolve the related GitHub review threads via the GraphQL API before considering the work complete
 
 <!-- FORGE:END -->
+<!-- USER:START -->
+
+## CI and Push Workflow
+
+This repository installs no local git hooks. CI on the PR is the gate; checks judge
+outcomes, not which local command produced a commit. GitHub protects `master`.
+Use plain `git push` to publish. `forge push` remains an optional explicit local
+validation command: it still runs branch protection, lint and tests; `--quick`
+runs lint without tests. Neither command requires repository git hooks.
+
+PR CI checks lint, tests, generated skill parity, the D20 audit artifact, lockfile
+consistency and the conventional PR title. Update generated files explicitly with
+`node scripts/sync-agent-skills.js` and `forge release regen-audit` when needed.
+
+Existing machines must run `lefthook uninstall` (or remove the old shims in
+`.git/hooks`) once after merging. Forge setup for consumer projects still installs
+hooks in this release; removing that product behavior is separate rebuild work.
+Never bypass hooks that still exist in consumer projects.
+
+<!-- USER:END -->

@@ -25,16 +25,18 @@ This project IS the Forge workflow. We use Forge to develop Forge (dogfooding).
 | Directory | Purpose |
 |-----------|---------|
 | `lib/agents/` | Agent plugins ([README](lib/agents/README.md)) |
-| `.forge/hooks/` | TDD enforcement |
+| `.forge/hooks/` | Legacy consumer hook scripts |
 | `.claude/commands/` | Workflow commands |
 | `.claude/skills/` | Workflow skills |
 | `bin/` | CLI entry points |
 
-## TDD Enforcement
+## Validation
 
-Pre-commit hook (`.forge/hooks/check-tdd.js`) checks for tests.
-- Source files need corresponding test files
-- Do not use `--no-verify`, `LEFTHOOK=0`, `HUSKY=0`, or hook removal to bypass checks. Agents are forbidden from bypassing hooks unless the user explicitly authorizes a specific audited Forge bypass event; CI still runs required checks.
+CI on the PR is the gate. This repository installs no local git hooks. Run
+`bun run lint` and relevant tests locally, then publish with plain `git push`.
+`forge push` is an optional explicit local validator; `--quick` omits its tests.
+Consumer setup still installs hooks in this release. Existing contributors should
+run `lefthook uninstall` once after merging, or remove the old `.git/hooks` shims.
 
 ## Project Structure
 
@@ -49,7 +51,7 @@ forge/
 │   └── scripts/            # Helper scripts
 ├── skills/                 # Skills (parallel-deep-research, sonarcloud-analysis)
 ├── .forge/
-│   └── hooks/              # Git hooks (TDD enforcement)
+│   └── hooks/              # Legacy consumer hook scripts
 ├── docs/                   # Documentation
 ├── AGENTS.md               # Universal workflow guide
 ├── CLAUDE.md               # Claude Code specific guide

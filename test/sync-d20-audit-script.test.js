@@ -243,23 +243,6 @@ describe('sync-d20-audit worktreeModifiedPaths', () => {
   });
 });
 
-describe('lefthook wiring', () => {
-  const lefthook = fs.readFileSync(path.join(__dirname, '..', 'lefthook.yml'), 'utf8');
-
-  test('runs the auto-heal as a pre-commit job', () => {
-    const preCommit = lefthook.split(/^pre-push:/m)[0];
-    expect(preCommit).toContain('node scripts/sync-d20-audit.js');
-  });
-
-  // The script does its own changed-path gating (the census roots are resolved at run
-  // time from plugin manifests + .forge/sync-manifest.json), so a static lefthook glob
-  // would be a second, drifting copy of the predicate.
-  test('does not re-declare the predicate as a lefthook glob', () => {
-    const job = lefthook.split('sync-d20-audit')[1].split(/\n\s{4}\w[\w-]*:/)[0];
-    expect(job).not.toContain('glob:');
-  });
-});
-
 // Unconditional, like the sibling real-git suite in test/release-readiness-tracked.test.js:
 // git is a hard prerequisite of this repo (the hooks, the census's own `git ls-files`, the
 // push workflow), so a suite that silently vanished without it would only ever hide a
