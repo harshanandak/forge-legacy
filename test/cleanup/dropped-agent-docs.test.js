@@ -11,6 +11,8 @@ const { join } = require('path');
  * Allowed exceptions:
  *   - CHANGELOG.md (historical)
  *   - docs/work/ before 2026-05-01 (historical design docs)
+ *   - research records listed in RESEARCH_RECORDS: they survey other harnesses and
+ *     tools by name as evidence, which is not a claim that Forge supports them
  */
 
 const ROOT = join(__dirname, '..', '..');
@@ -50,14 +52,23 @@ function discoverMarkdownFiles(dir, prefix = '') {
 
 const ACTIVE_WORK_DOC_START = '2026-05-01';
 
+const RESEARCH_RECORDS = [
+  'docs/work/2026-09-30-forge-final-plan/',
+  'docs/work/2026-10-16-platform-rebuild/',
+];
+
 function isCurrentOrFutureWorkDoc(relPath) {
   const match = /^docs\/work\/(\d{4}-\d{2}-\d{2})-/.exec(relPath);
   return Boolean(match) && match[1] >= ACTIVE_WORK_DOC_START;
 }
 
+function isResearchRecord(relPath) {
+  return RESEARCH_RECORDS.some((prefix) => relPath.startsWith(prefix));
+}
+
 const DOC_FILES = [
   ...discoverMarkdownFiles('docs/work')
-    .filter(isCurrentOrFutureWorkDoc),
+    .filter((relPath) => isCurrentOrFutureWorkDoc(relPath) && !isResearchRecord(relPath)),
   'docs/reference/EXAMPLES.md',
   'docs/reference/TOOLCHAIN.md',
   'docs/guides/AGENT_INSTALL_PROMPT.md',

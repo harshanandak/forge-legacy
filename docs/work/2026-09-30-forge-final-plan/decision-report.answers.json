@@ -1,0 +1,433 @@
+{
+  "report": "decision-report.html",
+  "savedAt": "2026-10-04T12:22:59.010Z",
+  "answer": "Decisions: all defaults",
+  "picks": {
+    "1": "A",
+    "4": "C",
+    "7": "A",
+    "8": "A",
+    "9": "A",
+    "10": "A",
+    "11": "A",
+    "12": "C",
+    "13": "A",
+    "14": "A",
+    "15": "A",
+    "16": "A",
+    "17": "A",
+    "18": "A",
+    "19": "A",
+    "20": "A",
+    "21": "A",
+    "22": "A",
+    "23": "A",
+    "24": "C",
+    "25": "C",
+    "26": "A",
+    "27": "A",
+    "28": "B",
+    "29": "B",
+    "32": "A",
+    "33": "C",
+    "35": "A",
+    "36": "A",
+    "37": "A",
+    "38": "B",
+    "39": "A",
+    "40": "A",
+    "41": "A",
+    "42": "C",
+    "43": "A",
+    "44": "C",
+    "45": "B",
+    "46": "A",
+    "47": "A",
+    "48": "A",
+    "49": "A",
+    "50": "A",
+    "51": "A",
+    "52": "A",
+    "53": "A",
+    "54": "A"
+  },
+  "notes": {},
+  "decisions": [
+    {
+      "n": 1,
+      "title": "Outside execution/public support",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 4,
+      "title": "Resources and forecast",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 7,
+      "title": "Skill-link failure",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 8,
+      "title": "Config layer breadth",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 9,
+      "title": "Lifecycle/update support",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 10,
+      "title": "First marketplace",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 11,
+      "title": "First cloud and knowledge service",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 12,
+      "title": "Visualization and external-app staging",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 13,
+      "title": "First adopter community/wedge",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 14,
+      "title": "Hosted-cost sustainability",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 15,
+      "title": "First follow-on bridge references",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 16,
+      "title": "Adoption worth pilot",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 17,
+      "title": "First adapters into agent runtimes",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 18,
+      "title": "Flow execution boundary",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 19,
+      "title": "OpenAI surface staging",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 20,
+      "title": "One catalog and generated native artifacts",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 21,
+      "title": "One thin forge mcp implementation",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 22,
+      "title": "OpenCode release tier and carrier",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 23,
+      "title": "Native community distribution timing",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 24,
+      "title": "Hermes native package and certification",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 25,
+      "title": "Verified build/adopt and knowledge-provider investment",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 26,
+      "title": "Shepherd versus merge queue — comparison disposition",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 27,
+      "title": "Quickstart emphasis",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 28,
+      "title": "Standard-template sequence",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 29,
+      "title": "Productivity claims and pilot",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 32,
+      "title": "Pi flagship: prove Supported before release",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 33,
+      "title": "Implementation language and resident runtime — REOPENED NARROWLY",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 35,
+      "title": "Claude instruction setup default",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 36,
+      "title": "Codex local packaging and trust bootstrap",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 37,
+      "title": "Pi and OpenCode tool transport",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 38,
+      "title": "Cursor certification scope",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 39,
+      "title": "PR monitoring mode",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 40,
+      "title": "Autonomous CI rerun policy",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 41,
+      "title": "Supply-chain dependencies and Node patch floor",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 42,
+      "title": "Optional release automation recipe",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 43,
+      "title": "Public typing coverage",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 44,
+      "title": "T3 host profile and integration depth",
+      "pick": "C",
+      "default": "C",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 45,
+      "title": "Standing harness knowledge refresh",
+      "pick": "B",
+      "default": "B",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 46,
+      "title": "First knowledge increment",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 47,
+      "title": "Physical migration pace",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 48,
+      "title": "Connected graph depth at launch",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 49,
+      "title": "Product wedge for cross-harness flows",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 50,
+      "title": "Cross-harness pilot route",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 51,
+      "title": "Cross-device flow resume staging",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 52,
+      "title": "Launch breadth for easy control",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 53,
+      "title": "First author UX",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    },
+    {
+      "n": 54,
+      "title": "Cold author timing promise",
+      "pick": "A",
+      "default": "A",
+      "changed": false,
+      "note": ""
+    }
+  ]
+}
