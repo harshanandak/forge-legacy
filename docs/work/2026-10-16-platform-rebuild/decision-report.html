@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forge rebuild: 17 decisions — DECISION REPORT</title>
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#ffffff;--fg:#18181b;--muted:#52525b;--dim:#71717a;
+  --line:#d4d4d8;--link:#155eef;
+  --done:#15803d;--attention:#a16207;--broken:#b91c1c;--unknown:#71717a;
+  --maxw:880px;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#111113;--fg:#f4f4f5;--muted:#c4c4cc;--dim:#a1a1aa;
+    --line:#3f3f46;--link:#8ab4ff;
+    --done:#6ee7a0;--attention:#f4c152;--broken:#ff8b8b;--unknown:#a1a1aa;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);
+  font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:var(--maxw);margin:0 auto;padding:64px 28px 96px}
+a{color:var(--link);text-underline-offset:.18em}
+a:hover{text-decoration-thickness:2px}
+a:focus-visible{outline:2px solid currentColor;outline-offset:3px}
+.kicker,.label,th,dt,.source{
+  font-family:var(--mono);font-size:12px;font-weight:550;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted);
+}
+.kicker{margin:0 0 18px}
+h1{
+  max-width:19ch;margin:0 0 20px;font-size:clamp(2.25rem,6vw,4rem);
+  font-weight:760;letter-spacing:-.035em;line-height:1.04;
+}
+.lede{max-width:68ch;margin:0 0 16px;font-size:clamp(1.08rem,2vw,1.28rem);color:var(--muted)}
+.note{max-width:72ch;margin:18px 0;padding-left:16px;border-left:2px solid var(--line)}
+.meta{display:flex;flex-wrap:wrap;gap:6px 0;margin:26px 0 0;padding:0;list-style:none;color:var(--muted)}
+.meta li+li::before{content:"·";margin:0 10px;color:var(--dim)}
+.toc{margin:42px 0 0;padding-top:18px;border-top:1px solid var(--line)}
+.toc .label{display:block;margin-bottom:8px}
+.toc ol{display:flex;flex-wrap:wrap;gap:6px 22px;margin:0;padding:0;list-style-position:inside}
+.toc li{margin:0}
+main{margin-top:52px}
+section{padding:44px 0;border-top:1px solid var(--line)}
+section:first-child{border-top:0;padding-top:0}
+h2{margin:0 0 12px;font-size:clamp(1.45rem,3vw,2rem);letter-spacing:-.02em;line-height:1.2}
+h3{margin:30px 0 8px;font-size:1.08rem;line-height:1.35}
+p{margin:0 0 16px}
+ul,ol{padding-left:22px}
+li{margin:5px 0}
+.facts{margin:24px 0}
+.facts>div{
+  display:grid;grid-template-columns:minmax(120px,1fr) minmax(0,2fr);
+  gap:20px;padding:11px 0;border-bottom:1px solid var(--line);
+}
+.facts>div:first-child{border-top:1px solid var(--line)}
+.facts dt,.facts dd{margin:0}
+.facts dd{overflow-wrap:anywhere}
+table{width:100%;margin:22px 0 28px;border-collapse:collapse;table-layout:fixed;font-size:.94rem}
+th{text-align:left;padding:0 14px 9px 0;border-bottom:1px solid var(--fg);vertical-align:bottom}
+td{padding:12px 14px 12px 0;border-bottom:1px solid var(--line);vertical-align:top;overflow-wrap:anywhere}
+th:last-child,td:last-child{padding-right:0}
+.num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+code,pre{font-family:var(--mono)}
+code{font-size:.88em}
+pre{
+  margin:18px 0;padding:4px 0 4px 16px;border-left:2px solid var(--line);
+  overflow-x:auto;font-size:12.5px;line-height:1.55;white-space:pre;
+}
+.choices{margin:18px 0 28px;padding-left:28px}
+.choices li{padding:14px 0 14px 8px;border-top:1px solid var(--line)}
+.choices li:last-child{border-bottom:1px solid var(--line)}
+.choices li::marker{font-family:var(--mono);font-weight:700}
+.choices strong{display:block;margin-bottom:3px}
+.tradeoff{display:block;margin-top:6px;color:var(--muted);font-size:.92rem}
+.timeline{margin:18px 0 28px;padding:0;list-style:none}
+.timeline li{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px;padding:13px 0;border-top:1px solid var(--line)}
+.timeline li:last-child{border-bottom:1px solid var(--line)}
+.timeline time{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.timeline p{margin:2px 0 0;color:var(--muted)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:18px 0 28px}
+.split>div{padding-right:24px}
+.split>div+div{padding:0 0 0 24px;border-left:1px solid var(--line)}
+.split .label{display:block;margin-bottom:8px}
+.check{margin:16px 0 28px;padding:0;list-style:none}
+.check li{display:grid;grid-template-columns:100px minmax(0,1fr);gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
+.check li:first-child{border-top:1px solid var(--line)}
+.status{font-family:var(--mono);font-size:12px;font-weight:650;text-transform:uppercase}
+.done{color:var(--done)}.attention{color:var(--attention)}
+.broken{color:var(--broken)}.unknown{color:var(--unknown)}
+.legend{margin:14px 0;color:var(--muted);font-size:.88rem}
+blockquote.evidence{margin:20px 0;padding-left:18px;border-left:2px solid var(--line)}
+blockquote.evidence p{font-size:1.05rem}
+.source{display:block;margin-top:8px;text-transform:none;letter-spacing:.02em}
+footer{margin-top:24px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);font-size:.86rem}
+@media(max-width:640px){
+  .wrap{padding:40px 20px 72px}
+  .toc ol{display:block}
+  .facts>div,.timeline li,.check li{grid-template-columns:1fr;gap:4px}
+  .split{grid-template-columns:1fr}
+  .split>div{padding:0 0 22px}
+  .split>div+div{padding:22px 0 0;border-left:0;border-top:1px solid var(--line)}
+  table{font-size:.84rem}
+  th,td{padding-right:8px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+@media print{
+  :root{--bg:#fff;--fg:#111;--muted:#444;--dim:#666;--line:#bbb;--link:#111}
+  .wrap{max-width:none;padding:0}
+  .toc{display:none}
+  a{color:inherit}
+  section{break-inside:avoid}
+}
+
+/* Decision picker (references/decision-picker.css) — inline in the report's <style>. */
+:root{--ok:#15803d;--warn:#b45309;--bad:#b91c1c}
+@media(prefers-color-scheme:dark){:root{--ok:#4ade80;--warn:#fbbf24;--bad:#f87171}}
+.visually-hidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+section,h3[id^="decision-"]{scroll-margin-top:110px}
+.picker-bar{position:sticky;top:0;z-index:10;margin:36px -14px 0;padding:10px 14px 8px;background:var(--bg);border-bottom:1px solid var(--line)}
+.picker-bar .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.picker-count{margin-right:auto;font-family:var(--mono);font-size:12px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.picker-count strong{color:var(--fg)}
+.picker-save{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:6px 0 0;font-size:.82rem;color:var(--muted)}
+.picker-save[data-state="saved"] .picker-save-text{color:var(--ok)}
+.picker-save[data-state="local"] .picker-save-text{color:var(--warn);font-weight:600}
+.picker-save[data-state="none"] .picker-save-text{color:var(--bad);font-weight:600}
+.pbtn{font:inherit;font-size:.84rem;line-height:1.4;padding:4px 11px;border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--fg);cursor:pointer}
+.pbtn:hover{border-color:var(--muted)}
+.pbtn[aria-pressed="true"]{background:var(--fg);border-color:var(--fg);color:var(--bg)}
+.pbtn:focus-visible,.pick input:focus-visible{outline:2px solid var(--link);outline-offset:2px}
+.pick{margin:10px 0;padding:8px 12px 10px;border:1px solid var(--line);border-radius:6px}
+.pick.is-changed{border-color:var(--link)}
+.pick legend{padding:0 6px;font-family:var(--mono);font-size:12px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.pick.is-changed legend{color:var(--link)}
+.pick-opts{display:flex;flex-wrap:wrap;gap:6px 22px;margin:2px 0 8px}
+.pick-opts label{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-weight:700;cursor:pointer}
+.pick-opts input{margin:0;accent-color:var(--link)}
+.pick-default{padding:0 5px;font-size:11px;font-weight:550;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:3px}
+.pick-note{display:flex;align-items:center;gap:10px;font-size:.88rem;color:var(--muted)}
+.pick-note input{flex:1;min-width:0;font:inherit;font-size:.88rem;padding:3px 8px;color:var(--fg);background:transparent;border:1px solid var(--line);border-radius:4px}
+.pick-decided{margin:10px 0;font-family:var(--mono);font-size:12px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+@media(max-width:640px){.picker-bar{margin:28px -20px 0;padding:10px 20px 6px}.picker-count{flex-basis:100%}.pick-note{flex-wrap:wrap}}
+@media print{.picker-bar{display:none}}
+
+
+article{padding:34px 0 8px;border-top:1px solid var(--line)}
+article h3{margin:0 0 12px;font-size:1.25rem}
+article p{max-width:72ch}
+details{margin:14px 0 20px}
+summary{cursor:pointer;font-family:var(--mono);font-size:12px;font-weight:550;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+summary:focus-visible{outline:2px solid var(--link);outline-offset:3px}
+details p{margin-top:10px;color:var(--muted);font-size:.9rem}
+.plain li{margin:7px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="kicker">FORGE REBUILD · JOB: DECIDE · 2026-10-16</p>
+    <h1>Forge rebuild: 17 choices left for you</h1>
+    <p class="lede">Decisions needed: 17 — pick in the page; anything you leave keeps its default.</p>
+    <div class="picker-bar" id="picker"></div>
+    <nav class="toc" aria-label="Report sections">
+      <span class="label">Contents</span>
+      <ol>
+        <li><a href="#plan">The plan in one screen</a></li>
+        <li><a href="#decided">Already decided by you</a></li>
+        <li><a href="#decisions">The 17 decisions</a></li>
+        <li><a href="#done">Pick, then say done</a></li>
+      </ol>
+    </nav>
+  </header>
+  <main>
+    <section id="plan">
+      <p class="label">Summary</p>
+      <h2>The plan in one screen</h2>
+      <ul class="plain">
+        <li>Forge is rebuilt as a new project, contract first, shipped as the same <code>forge-workflow</code> package.</li>
+        <li>The core is small and knows no workflow: no stages, TDD, pull requests or issues. Everything else is a block.</li>
+        <li>Each block declares its operations once; the command line and MCP tools are generated from that.</li>
+        <li>A fresh install switches nothing on. Forge reads your project and mirrors how you already work.</li>
+        <li>Working engines (issues, contracts, memory, flow) come over one at a time with their tests; the default is drop.</li>
+        <li>Our own workflow becomes one importable template among others, never part of the core.</li>
+        <li>Safe migration of your five projects blocks the release (a sixth, curapod, is decision 17).</li>
+        <li>17 of the old plan's decisions were overturned; five need your confirmation (decisions 11 to 15).</li>
+      </ul>
+      <dl class="facts">
+        <div><dt>Build order</dt><dd>scaffold → contract lock → 5 core lanes in parallel → first runnable slice → 9 block lanes in parallel → engines proof → delivery end to end → project migration → release</dd></div>
+        <div><dt>Estimate</dt><dd>114–170 agent-days, about 9–14 calendar weeks at 4–5 lanes at once (old plan: 92–163 days, 10–19 weeks). Estimate, not measured. Source: plan section 12.</dd></div>
+        <div><dt>Longest chain</dt><dd>34–52 agent-days of serial work, about 7–10 weeks.</dd></div>
+      </dl>
+      <p>Open for detail: <a href="rebuild-plan.md">the plan of record</a> · <a href="rebuild-plan-review.md">review round 1</a> · <a href="rebuild-plan-review-r2.md">review round 2</a> · <a href="rebuild-decisions.json">the raw decision data</a> · <a href="brief.md">your rules</a>.</p>
+    </section>
+
+    <section id="decided">
+      <p class="label">Decided</p>
+      <h2>Already decided by you</h2>
+      <p>These come from your brief and are not up for choice here.</p>
+      <ul class="plain">
+        <li>New project, same package name; the old repo is frozen to fixes and used to track the build.</li>
+        <li>Breaking changes are fine for a fresh 0.1.0; migrating your five projects safely blocks release.</li>
+        <li>Parallel lanes, each in its own worktree, each with an owner, tests and a merge point.</li>
+        <li>The opinionated workflow stays on top as one solution; the core never assumes it.</li>
+        <li>No hand-written commands; one naming system; CLI and MCP generated from one catalog.</li>
+        <li>Default is drop: nothing comes over unless 0.1.0 needs it and it works.</li>
+        <li>TypeScript and Bun-first for us. Users keep their own tools, and Forge runs on Node 24/26 without Bun.</li>
+        <li>Nothing is on by default; your picks always win and Forge adapts to your project.</li>
+        <li>Dependencies are fine when they earn their place, each behind one adapter.</li>
+        <li>Target the latest line of each harness; no old-version shims.</li>
+      </ul>
+    </section>
+
+    <section id="decisions">
+      <p class="label">Decisions</p>
+      <h2>The 17 decisions</h2>
+      <p>Each has a default. Pick a letter in the picker under each decision, or leave it.</p>
+<article data-decision="1">
+<h3 id="decision-1">1. Plain names for the building blocks</h3>
+<p><strong>What it decides.</strong> Should the old internal names (Kernel, Contracts, Flow, Shepherd, gate, rails) be replaced by plain names people would guess?</p>
+<p><strong>Why it matters to you.</strong> Block names show up in config, package docs and error messages. Plain names make Forge easier to learn for you, other people and agents, but your existing notes and docs use the old words.</p>
+<p><strong>Example.</strong> To set up issue tracking you would configure the 'work' block, not the 'kernel' block. To check a pull request you would run 'forge pr checks', not 'forge shepherd'.</p>
+<ol class="choices" type="A">
+<li><strong>Plain names</strong>Core: block, config, template, catalog, state, host, doctor. Blocks: work (issues), memory, context, check, git, pr, github, policy, workflow, skills, project, migrate, plus one block per harness (pi, opencode, codex, claude, cursor, hermes). Kernel, Contracts, Flow, Shepherd, gate and rails stop being product words.</li>
+<li><strong>Keep the old names as block IDs</strong>Commands still use plain nouns (forge issue claim), but the blocks are called kernel, contracts, flow and shepherd.</li>
+<li><strong>Rename only Kernel and Shepherd</strong>Kernel becomes work and Shepherd becomes pr; the other names stay.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. Each name says what the block owns, and 'Kernel' wrongly suggests an always-on core that also owns workflow.</p>
+<p><strong>What would change it.</strong> You value continuity with existing docs and memory notes more than names that are easy to guess.</p>
+<details><summary>Technical detail</summary><p>Block IDs follow publisher/name (forge/work). Issue authority moves to forge/work; generic accepted records, events and leases stay in core 'state'; run and step records belong to forge/workflow. Source: naming-and-block-authoring.md section 4 and decisions N1/N2, with the corrected split of runs out of 'work'. The brief leaves block names open (brief.md:36).</p></details>
+</article>
+<article data-decision="2">
+<h3 id="decision-2">2. Command shape</h3>
+<p><strong>What it decides.</strong> Should commands be the short 'forge &lt;noun&gt; &lt;verb&gt;', or always include the block name?</p>
+<p><strong>Why it matters to you.</strong> This decides what people and agents type. Either way, Forge refuses a block that reuses a noun another block already owns, because the brief says Forge never silently replaces a choice you already made.</p>
+<p><strong>Example.</strong> You install a notes block that also claims the noun 'memory'. Under A, Forge refuses it and tells you to rename it in your config (for example to 'alice-notes'). Under B the clash cannot happen, because the commands are 'forge memory memory search' and 'forge alice-notes memory search'.</p>
+<ol class="choices" type="A">
+<li><strong>Short commands; clashes refused</strong>'forge issue claim 42' on the command line and 'issue_claim' in MCP. A clash is refused when the block is added, and you fix it with a one-line rename in config. Install order never decides.</li>
+<li><strong>Always include the block name</strong>'forge work issue claim 42'. Longer to type, but clashes cannot happen.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It matches what your projects already type, stays short for agents, and makes every clash loud.</p>
+<p><strong>What would change it.</strong> Outside blocks turn out to fight over the same nouns often enough that renames become routine.</p>
+<details><summary>Technical detail</summary><p>Operation address noun.verb with kebab segments. MCP names are noun_verb, at most 48 characters, because the Claude API forbids dots and hosts add a prefix. Reserved nouns and publishers apply. Names carry no versions: there are per-operation stability tiers and a one-minor-version 'formerly' rename window. Merges naming decisions N3, N4, N5 and N9. A 'first installed wins' option was removed: silent shadowing conflicts with brief.md:52.</p></details>
+</article>
+<article data-decision="3">
+<h3 id="decision-3">3. How many Forge tools agents see through MCP</h3>
+<p><strong>What it decides.</strong> Which Forge operations should appear directly as MCP tools in an agent's tool list?</p>
+<p><strong>Why it matters to you.</strong> MCP is required (the brief generates both the command line and MCP from one catalog). The open part is how much to show at once. More tools make every operation easy to reach, but they fill the agent's context and make it worse at picking the right tool.</p>
+<p><strong>Example.</strong> With 12 blocks installed there are about 70 operations. Under A, the agent sees up to 40 stable ones plus 3 discovery tools that can reach the rest. Under B, it sees only the 3 discovery tools and looks things up each time.</p>
+<ol class="choices" type="A">
+<li><strong>Stable tools up to a budget, plus discovery tools</strong>Stable, admitted, agent-callable operations up to 40, plus catalog_list, catalog_describe and catalog_call for everything else. Human-only operations (admitting code, granting approvals) never appear. Config can pick nouns or switch to read-only.</li>
+<li><strong>Discovery tools only</strong>Just catalog_list, catalog_describe and catalog_call. Smallest context, but one extra step per call.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. The budget keeps context cost bounded, and the discovery tools keep everything reachable through the same permission checks.</p>
+<p><strong>What would change it.</strong> Hosts' tool search makes large tool lists cheap (raise the budget), or measured agent runs show B is just as successful.</p>
+<details><summary>Technical detail</summary><p>Tools are generated from the catalog record. Annotations come from declared effects (readOnlyHint, destructiveHint, idempotentHint, openWorldHint). The tools/list order is deterministic per catalog digest, with list_changed notifications. Both the pre-2026 and the 2026-07-28 stateless protocol revisions are negotiated. Pi needs exposure:'direct' for the exposed tools. Merges naming N6 and N12. A 'no MCP' option was removed because brief.md:36 requires a generated MCP surface.</p></details>
+</article>
+<article data-decision="4">
+<h3 id="decision-4">4. Command-line output: machine-first or human-first</h3>
+<p><strong>What it decides.</strong> Should Forge print JSON by default and show human-friendly text only when asked?</p>
+<p><strong>Why it matters to you.</strong> Agents are the main callers, and output that changes with the terminal type has broken things on Windows before. But you also use the command line yourself.</p>
+<p><strong>Example.</strong> 'forge issue list' prints a JSON envelope. 'forge issue list --format text' prints a table. Under B, the same command prints a table in your terminal and JSON when an agent pipes it.</p>
+<ol class="choices" type="A">
+<li><strong>JSON always; text on request</strong>One predictable output everywhere. Add --format text for people.</li>
+<li><strong>Detect the terminal</strong>Text for a human terminal, JSON when piped, with an override flag.</li>
+<li><strong>Text by default; --json on request</strong>Human-first, like most command-line tools.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It keeps behaviour identical across harnesses and Windows, which was the top bug source.</p>
+<p><strong>What would change it.</strong> You find yourself typing --format text on most commands.</p>
+<details><summary>Technical detail</summary><p>Envelope {ok, op, status: OK|FAIL|INCOMPLETE, result|error, warnings[]}, with exit codes 0/1/2/3/4, reconciled with the 05538ad7 regression contract. A generic renderer is used for text; there are no per-command formatters. Naming decision N7.</p></details>
+</article>
+<article data-decision="5">
+<h3 id="decision-5">5. Config file format</h3>
+<p><strong>What it decides.</strong> Should the project config stay a YAML file (.forge/config.yaml), read through one well-maintained library?</p>
+<p><strong>Why it matters to you.</strong> YAML is easy for people and agents to read and was already decided, but Node has no built-in YAML reader, so it costs Forge one runtime library. Node does read plain JSON, but plain JSON has no comments.</p>
+<p><strong>Example.</strong> Under A you edit .forge/config.yaml with comments. Under B the file is .forge/config.json with a $schema line, so editors autocomplete keys, but you cannot leave comments in it.</p>
+<ol class="choices" type="A">
+<li><strong>YAML via one library behind an adapter</strong>The 'yaml' package in strict mode: no anchors, aliases, merge keys or custom tags, with size and depth limits. Swappable later.</li>
+<li><strong>Plain JSON</strong>Read with Node's built-in JSON parser, no library, free editor validation. No comments, and a format change from your current files.</li>
+<li><strong>YAML with our own small parser</strong>No library, but Forge writes and maintains a parser for the strict subset.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. The library has had no defects in our history, is actively maintained, sits behind one adapter so a later swap is cheap, and it keeps the decided format.</p>
+<p><strong>What would change it.</strong> The library gets a security advisory or a breaking major version, or you prefer a file without comments to having a library (then B).</p>
+<details><summary>Technical detail</summary><p>Adapter config-yaml implements the ConfigParser port, with a contract suite shared by any replacement. Plan line 614 fixed YAML; dependencies-and-hooks decision Y (dependencies-and-hooks.md:208-217). JSON with comments (JSONC) is not offered as dependency-free: Node has no JSONC parser, so it would need a library or our own parser, which is option C's cost in another format.</p></details>
+</article>
+<article data-decision="7">
+<h3 id="decision-7">7. Local git hook help (always opt-in)</h3>
+<p><strong>What it decides.</strong> Forge never installs or requires a hook runner and always leaves your own hooks alone. On top of that, how much should it help when you ask for a local git hook?</p>
+<p><strong>Why it matters to you.</strong> Local hooks caused a dozen kinds of failure in the old Forge. Your projects that already use Lefthook, Husky or pre-commit keep them. The question is only what Forge offers when you want Forge's checks wired into a local hook.</p>
+<p><strong>Example.</strong> In a project that uses Lefthook, you ask Forge for a pre-push check. Under A, Forge prints the one line to add to your lefthook.yml. Under B, it can also add that line for you after showing the change, and remove it again later.</p>
+<ol class="choices" type="A">
+<li><strong>Point to your hook manager; tiny hook only where none exists</strong>Forge detects Lefthook, Husky, pre-commit or existing hooks and prints the line to add to them. Where no hook manager exists, 'forge hook install' writes a hook of at most 10 lines on request. Nothing is ever installed without being asked.</li>
+<li><strong>A plus editing your hook manager's config on request</strong>An adapter adds or removes Forge's entry in lefthook.yml, .husky or .pre-commit-config.yaml, with a preview and a backup, only when you ask. More adapters to maintain.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A for 0.1.0, with B filed as a follow-up. It never touches a hook manager's files, and B can be added later without changing anything else.</p>
+<p><strong>What would change it.</strong> Several of your projects want Forge's checks inside their existing hook manager and editing it by hand becomes a chore (then B).</p>
+<details><summary>Technical detail</summary><p>The generated hook lives at the path from git rev-parse --git-path hooks, carries a sentinel, backs up any non-Forge hook it would replace, never sets core.hooksPath, and execs 'forge check run --trigger &lt;event&gt;' (catalog operation check.run with declared argument 'trigger'). Install, remove and status are catalog operations hook.install, hook.remove and hook.status in forge/git; installing writes one owned file, running the hook writes no tracked file. Behaviour tests come from #135, #382, #388, #458 and #452 (dependencies-and-hooks.md:139). Default-on and 'never offer' options were removed: brief.md:48 rules out default-on, and brief.md:52 requires an adapter offer when Forge cannot work with a user's choice.</p></details>
+</article>
+<article data-decision="8">
+<h3 id="decision-8">8. An optional 'the new tests catch the bug' check in our delivery template</h3>
+<p><strong>What it decides.</strong> Should our delivery template offer a check that the new tests fail on the old code and pass on the new code?</p>
+<p><strong>Why it matters to you.</strong> Your projects valued evidence that tests were written to catch the change. The brief says gates judge results, not process, so this check proves the tests catch the change; it does not prove the order they were written in. The old commit-time TDD gate is gone either way.</p>
+<p><strong>Example.</strong> Under B, when you switch it on, the pull request check runs the new tests against the base commit (expecting a failure) and against your head commit (expecting a pass), and reports the result. It never blocks a commit on your laptop.</p>
+<ol class="choices" type="A">
+<li><strong>Results only; test-first stays advice</strong>The template requires tests passing on the exact commit. Test-first is guidance in the skills.</li>
+<li><strong>Optional check, off by default</strong>A template rule you can switch on per project. It runs wherever your project runs its checks (usually CI on the pull request).</li>
+<li><strong>Check on by default in the delivery template</strong>Still applies only to projects that import the delivery template.</li>
+</ol>
+<p><strong>Recommendation (default B).</strong> B. It keeps the evidence your projects valued as an outcome you can choose, without making it the default.</p>
+<p><strong>What would change it.</strong> You want every project on the delivery template held to it (C), or nobody turns it on after a release (A).</p>
+<details><summary>Technical detail</summary><p>A counterfactual regression check: a policy rule in forge/policy that uses forge/check against base and head. It replaces Product-Suite's tdd-gate hook intent and the old rail.tdd_intent. Projects without the delivery template never see it.</p></details>
+</article>
+<article data-decision="9">
+<h3 id="decision-9">9. File format for blocks other people write</h3>
+<p><strong>What it decides.</strong> Should outside block authors ship a single CommonJS file for 0.1.0, or may they also ship a modern ES module file?</p>
+<p><strong>Why it matters to you.</strong> The new Forge itself uses modern modules, and most TypeScript authors produce them by default. The old plan fixed a single CommonJS file because its loading and safety checks were already worked out.</p>
+<p><strong>Example.</strong> An author's build outputs dist/index.mjs. Under A they add one build flag to also output dist/index.cjs. Under B Forge accepts the .mjs file as is.</p>
+<ol class="choices" type="A">
+<li><strong>CommonJS file for 0.1.0; modules after a proof</strong>Keep the decided single .cjs file. Add ES module entries once a test shows they load safely from the captured snapshot on Node 24/26 and Bun.</li>
+<li><strong>Accept both from 0.1.0</strong>A .cjs or a single .mjs, both exporting the same synchronous operations.</li>
+<li><strong>ES modules only</strong>Drop the CommonJS entry.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It keeps a decided, safety-reviewed path for the release, and the proof needed for B is small and scheduled in the contract lane.</p>
+<p><strong>What would change it.</strong> The loading proof passes early in the contract lane (move to B for 0.1.0).</p>
+<details><summary>Technical detail</summary><p>ABI trusted-action-sync/v1: module.exports.operations, a sync handler, and Promise refusal. An ESM entry would load via require(esm) or import() from the immutable snapshot; it must have no top-level await and keep the same refusal and capture semantics. Old decision 1A is kept.</p></details>
+</article>
+<article data-decision="10">
+<h3 id="decision-10">10. What the first working end-to-end slice proves</h3>
+<p><strong>What it decides.</strong> Should the first working slice prove the new building-block path with an outside block, or prove issue tracking first because your projects use it most?</p>
+<p><strong>Why it matters to you.</strong> The first slice sets the order of all later work. Proving the outside-block path first tests the hardest new design early. Proving issues first gives you something useful sooner.</p>
+<p><strong>Example.</strong> Under A, in a plain npm project, an agent's call to a small version-bump block is refused until you approve it; then it works from both the command line and MCP, with no Forge core change. Under B, the first thing that works is 'forge issue create' and 'forge issue claim' on the new state store.</p>
+<ol class="choices" type="A">
+<li><strong>Outside block plus project detection first</strong>Proves the contract, generated commands, admission, a state record with a refused stale write, and detection of the project's test command, all from the packed package.</li>
+<li><strong>Issue tracking first</strong>Ports the issue block before the outside-block path is complete.</li>
+<li><strong>Both in one bigger first slice</strong>Takes longer before anything runs end to end.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It catches contract mistakes before nine lanes build on them, and issue tracking follows immediately after in parallel.</p>
+<p><strong>What would change it.</strong> You need the new issue tracker running in your projects before the rest is ready.</p>
+<details><summary>Technical detail</summary><p>The M2 slice in plan section 9.2: npm+vitest fixture without Bun; config show lists the detected 'npm test' with its source (detection only; running it joins at M3); an agent call before admission returns ADMISSION_REQUIRED; the human admits; semver bump returns the same result over CLI and MCP; semver.mark with a caller-supplied stale expectRevision returns REVISION_CONFLICT, plus a controlled-interleaving fixture.</p></details>
+</article>
+<article data-decision="11">
+<h3 id="decision-11">11. Minimum Node version for users</h3>
+<p><strong>What it decides.</strong> Should Forge require Node 24.15 or newer, rather than any Node 24?</p>
+<p><strong>Why it matters to you.</strong> Node 24.15 is where Node's built-in database reached release-candidate status, and Forge's state store uses it. It is still a release candidate, not stable, so the store stays behind an adapter either way.</p>
+<p><strong>Example.</strong> A user on Node 24.10 runs 'npx forge-workflow'. Under A npm warns that Node 24.15+ is required and the user upgrades within Node 24. Under B it runs on the older, experimental database build.</p>
+<ol class="choices" type="A">
+<li><strong>Node 24.15 or newer, plus Node 26</strong>Matches the database's release-candidate status.</li>
+<li><strong>Node 24.12 or newer, plus Node 26</strong>Where running TypeScript became stable; one step lower, with the database still experimental there.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. Users get the release-candidate database build, and the cost is a minor-version upgrade within Node 24.</p>
+<p><strong>What would change it.</strong> One of your projects or a known user is pinned below 24.15.</p>
+<details><summary>Technical detail</summary><p>node:sqlite is Stability 1.2 release candidate since 24.15.0 (language-decision.md:71; dependencies-and-hooks.md:50). engines &gt;=24.15. CI matrix Node 24 latest and Node 26. This overturns old decision 41 (existing floor) and moves it toward its option B.</p></details>
+</article>
+<article data-decision="12">
+<h3 id="decision-12">12. How releases are cut and published</h3>
+<p><strong>What it decides.</strong> Which release flow should the new repo use?</p>
+<p><strong>Why it matters to you.</strong> The new repo has no release automation yet. The flow decides how much ceremony each release takes and whether the published package is exactly the one that was tested.</p>
+<p><strong>Example.</strong> Under A, you merge a 'release 0.1.1' pull request. CI builds one package file, tests it, publishes it to the 'next' tag with a signed provenance record, installs that exact version back from npm on Node without Bun, and only then moves 'latest'. No password or token is stored.</p>
+<ol class="choices" type="A">
+<li><strong>Version pull request plus automatic publish</strong>A version bump PR with a changelog generated from merged pull request titles. CI packs once, tests, publishes that exact file via npm trusted publishing with provenance, then proves the registry copy before promoting the tag.</li>
+<li><strong>Changesets</strong>Contributors add small change notes and a bot opens version PRs; the same publish and registry proof. Adds a development dependency.</li>
+<li><strong>Manual publish</strong>You run the publish yourself after CI is green; the registry proof still runs before the tag moves.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It is the least ceremony that still guarantees the tested file is the published file, and it needs no new dependency.</p>
+<p><strong>What would change it.</strong> Outside contributors start sending many PRs that each need their own release note (then B).</p>
+<details><summary>Technical detail</summary><p>GitHub OIDC trusted publishing with provenance. Exact-tarball BOM; registry readback of integrity, dist-tags and provenance; then a cold-cache install of the exact registry version with normal npm and Bun lifecycle, and 'npx --package forge-workflow@&lt;version&gt; forge' on Node without Bun (threads-ops.md:297). Unique prerelease versions on next/beta. This overturns old decision 42 (keep current automation), keeps old decision 6A (exact-artifact publication) and borrows the TanStack Config pattern.</p></details>
+</article>
+<article data-decision="13">
+<h3 id="decision-13">13. Single-file binary downloads</h3>
+<p><strong>What it decides.</strong> Should 0.1.0 drop the single-file binary builds of Forge and ship only the npm package?</p>
+<p><strong>Why it matters to you.</strong> The old plan kept 'all existing binary targets', but the binary work was never adopted, and each target needs its own build and runtime test.</p>
+<p><strong>Example.</strong> Under A, users install with npm or npx on Node 24+. Under B, a user could also download one 'forge' executable for Windows, macOS or Linux, and we would test each one before every release.</p>
+<ol class="choices" type="A">
+<li><strong>No binaries in 0.1.0</strong>npm package only. Add binaries later if someone asks for them.</li>
+<li><strong>Keep binary targets</strong>Build and test the Bun-compiled executables for every release.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. There is no named user for binaries, and they add release work and test time.</p>
+<p><strong>What would change it.</strong> You or a user needs Forge on a machine without Node.</p>
+<details><summary>Technical detail</summary><p>Drops build-binary.yml, gen-embedded-assets and the plan section 5 binary row / cut C6 (which retained existing binary targets). Re-admit under the demand-before-breadth rule.</p></details>
+</article>
+<article data-decision="14">
+<h3 id="decision-14">14. Automatic re-running of failed CI checks</h3>
+<p><strong>What it decides.</strong> Should Forge stop re-running failed CI checks on its own and leave reruns to an explicit request?</p>
+<p><strong>Why it matters to you.</strong> The old automatic rerun never fired or failed with errors, and rerunning until green hides real problems. But flaky infrastructure failures do waste time.</p>
+<p><strong>Example.</strong> A pull request check fails with a runner network timeout. Under A, 'forge pr status' reports it as an infrastructure failure, and the agent calls 'forge pr rerun' with that evidence. Under B, Forge reruns it once by itself.</p>
+<ol class="choices" type="A">
+<li><strong>No automatic reruns</strong>An explicit rerun operation that records the evidence for why. Repeated failures are quarantined with an issue.</li>
+<li><strong>One bounded automatic rerun for infrastructure failures</strong>The old default: only for clearly classified infrastructure failures, bound to the exact commit.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It removes a feature that never worked reliably, and agents can rerun deliberately with evidence.</p>
+<p><strong>What would change it.</strong> Infrastructure flakes turn out to cost more agent time than the explicit rerun saves.</p>
+<details><summary>Technical detail</summary><p>This overturns old decision 40A. pr.rerun has effects external:github and a required reason/evidence input. The auto-actions Tier-A path is dropped (threads-ops lesson 6).</p></details>
+</article>
+<article data-decision="15">
+<h3 id="decision-15">15. Mutation testing in our repo</h3>
+<p><strong>What it decides.</strong> Should our new repo drop the mutation-testing tool and instead prove critical fixes with targeted 'remove the fix, the test must fail' checks?</p>
+<p><strong>Why it matters to you.</strong> You had decided to keep a mutation-testing lane. The tool is heavy, needed a disruptive upgrade, and was never fully working, while the fixes that matter most are a short list of race and authority bugs. This concerns only how we test Forge, not users' projects.</p>
+<p><strong>Example.</strong> For the expired-lease fix, CI temporarily removes the fix line and confirms the regression test now fails. Under B, a mutation tool also mutates the whole codebase in a separate job.</p>
+<ol class="choices" type="A">
+<li><strong>Targeted remove-the-fix checks only</strong>For every authority, concurrency and gate fix. No mutation tool.</li>
+<li><strong>Keep a mutation-testing job in CI</strong>Optional job, with the same targeted checks on top.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It proves exactly the tests that guard the costly bugs, without the heavy tool.</p>
+<p><strong>What would change it.</strong> Coverage gaps keep letting regressions through in code that has no targeted check.</p>
+<details><summary>Technical detail</summary><p>This overturns owner-decided old decision 5A (retain the configured mutation lane). Stryker DROP (dependencies-and-hooks b3); mistakes-ledger rule 7.</p></details>
+</article>
+<article data-decision="17">
+<h3 id="decision-17">17. Is curapod part of the must-migrate set?</h3>
+<p><strong>What it decides.</strong> Should curapod join the five projects whose safe migration blocks the release?</p>
+<p><strong>Why it matters to you.</strong> curapod uses Forge and has about 101 tracked issues, but it is not on the plan's list of five. If it is left out, its data could be stranded when the old tooling retires.</p>
+<p><strong>Example.</strong> Under A, the release cannot ship until curapod's issues, protected-path settings and decision records are backed up, migrated and read back. Under B, it ships without curapod, and the old importer and tooling stay installed until curapod is migrated and read back.</p>
+<ol class="choices" type="A">
+<li><strong>Add it as a sixth must-migrate project</strong>Same backups, manifests, readback and rollback proof as the others. Adds about 2-3 agent-days and owner time.</li>
+<li><strong>Migrate after release</strong>The release does not wait. The old importer and toolchain retire only after curapod reads back.</li>
+<li><strong>Leave it on the old Forge</strong>No migration planned; curapod keeps its installed old Forge. The importer retires after the five.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. It has real tracked data and its own conflicting rule names, so it is exactly the kind of project the migration proof exists for.</p>
+<p><strong>What would change it.</strong> curapod is being retired, or it has moved fully to its own decision records and no longer needs the tracker.</p>
+<details><summary>Technical detail</summary><p>About 101 issues in .git/forge/kernel.sqlite; tracked .forge/kernel/issues.jsonl is stale (84 vs 101). It has its own rail.* IDs that collide, D-NNN decision records (kept as its authority), and a repo moved to litemed-tech/curapod (threads-consumers.md:27). The plan's 'selected migration set' (section 10) is the five plus curapod under A; release, retirement, backups and rollback all reference that one set.</p></details>
+</article>
+<article data-decision="18">
+<h3 id="decision-18">18. What to do with the old Forge backlog</h3>
+<p><strong>What it decides.</strong> When the new repo starts tracking its own work, how should the old repo's 1,659 issues (857 open, many stale) move over?</p>
+<p><strong>Why it matters to you.</strong> Carrying everything keeps full history but brings a backlog nobody can sort. Starting fresh is clean but loses easy access to useful open work. No data is deleted either way, because the old store stays backed up.</p>
+<p><strong>Example.</strong> Under A, all 1,659 issues move and Forge shows you the open issues untouched for 60 days; only the ones you pick are closed, each with a note. Under B, only open issues touched recently move, the rest stay readable by ID in an archive, and links from moved issues to archived ones are kept.</p>
+<ol class="choices" type="A">
+<li><strong>Move everything; you pick stale ones to close</strong>Full history in the new tracker. A stale list is shown; nothing is closed by age alone.</li>
+<li><strong>Move recent open issues; archive the rest</strong>The new tracker starts small. Archived issues stay readable by ID, and dependency links to them are kept, not dropped.</li>
+<li><strong>Start fresh; archive everything</strong>File new issues as work comes up. The archive stays readable by ID.</li>
+</ol>
+<p><strong>Recommendation (default B).</strong> B. The rebuild changes most of what those issues describe. Moving only live work keeps the new tracker useful, and the archive keeps every record and link.</p>
+<p><strong>What would change it.</strong> You rely on searching old closed issues day to day (then A).</p>
+<details><summary>Technical detail</summary><p>Old store: kernel_issues 1659, kernel_events 8418, kernel_comments 1918, kernel_claims 464 (plan:1892-1899); 414 open older than August 2026 (mistakes-ledger.md:22). Migration preservation (every record kept in the backup and archive) is separate from this triage choice. Bootstrap tracking stays in the old Kernel until the self-hosting check.</p></details>
+</article>
+<article data-decision="19">
+<h3 id="decision-19">19. How many lanes run at once</h3>
+<p><strong>What it decides.</strong> How many parallel work lanes should run at the same time after the core design is locked?</p>
+<p><strong>Why it matters to you.</strong> More lanes finish sooner but need more of your review time and cause more merge conflicts in shared files. Fewer lanes are calmer but take longer. This is a staffing guess, not a delivery date.</p>
+<p><strong>Example.</strong> Under A, about 4-5 lanes run at once and the estimate is about 9-14 weeks. Under B, 3 lanes run and it is about 10-15 weeks, with fewer reviews landing at the same time.</p>
+<ol class="choices" type="A">
+<li><strong>4-5 lanes at once</strong>Up to 9 lanes are startable after the first working slice; at most 3 merges queue at a time.</li>
+<li><strong>3 lanes at once</strong>Slower, lighter on your review time.</li>
+<li><strong>6 or more lanes at once</strong>Fastest on paper; review and conflicts become the limit.</li>
+</ol>
+<p><strong>Recommendation (default A).</strong> A. The critical path limits the gain beyond 5 lanes, and shared-file conflicts stay manageable with single owners.</p>
+<p><strong>What would change it.</strong> You can give less than about 15 focused hours a week to reviews and approvals (then B).</p>
+<details><summary>Technical detail</summary><p>Critical path from the section 12 earliest-start table: L0, L1, L5, M2, M3 (L7/L8/L11 plus integration), L14 converter, L14 cutover, L15 tail, about 34-52 agent-days. Throughput is about 5 agent-days per lane per week, so the calendar is max(path, throughput) + 2-3 weeks. Conflict hot spots are migrations/state driver, schemas and ports, package.json/exports, and the assembly list, each single-owner.</p></details>
+</article>
+    </section>
+
+    <section id="done">
+      <p class="label">Next</p>
+      <h2>Pick, then say done</h2>
+      <p>Your answers save to <code>decision-report.answers.json</code> next to this report as you go. When finished, tell Claude “done” and it reads that file. Anything you did not touch keeps its default.</p>
+    </section>
+  </main>
+  <footer>Generated 2026-10-16 · Sources: rebuild-plan.md, rebuild-decisions.json, brief.md.</footer>
+</div>
+<script type="application/json" id="decision-data" data-answers-server="http://127.0.0.1:8765" data-answers-report="decision-report.html">
+{
+ "report": "decision-report.html",
+ "counts": {
+  "total": 17,
+  "open": 17,
+  "decided": 0
+ },
+ "decisions": [
+  {
+   "n": 1,
+   "title": "Plain names for the building blocks",
+   "section": "2.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 2,
+   "title": "Command shape",
+   "section": "2.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 3,
+   "title": "How many Forge tools agents see through MCP",
+   "section": "5.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 4,
+   "title": "Command-line output: machine-first or human-first",
+   "section": "2.1",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 5,
+   "title": "Config file format",
+   "section": "6.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 7,
+   "title": "Local git hook help (always opt-in)",
+   "section": "6.3",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 8,
+   "title": "An optional 'the new tests catch the bug' check in our delivery template",
+   "section": "3.1",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "B",
+   "decided": ""
+  },
+  {
+   "n": 9,
+   "title": "File format for blocks other people write",
+   "section": "4",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 10,
+   "title": "What the first working end-to-end slice proves",
+   "section": "9.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 11,
+   "title": "Minimum Node version for users",
+   "section": "6.1",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 12,
+   "title": "How releases are cut and published",
+   "section": "6.1",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 13,
+   "title": "Single-file binary downloads",
+   "section": "7",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 14,
+   "title": "Automatic re-running of failed CI checks",
+   "section": "3",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 15,
+   "title": "Mutation testing in our repo",
+   "section": "6.2",
+   "status": "open",
+   "options": [
+    "A",
+    "B"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 17,
+   "title": "Is curapod part of the must-migrate set?",
+   "section": "10",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  },
+  {
+   "n": 18,
+   "title": "What to do with the old Forge backlog",
+   "section": "10",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "B",
+   "decided": ""
+  },
+  {
+   "n": 19,
+   "title": "How many lanes run at once",
+   "section": "9.1",
+   "status": "open",
+   "options": [
+    "A",
+    "B",
+    "C"
+   ],
+   "default": "A",
+   "decided": ""
+  }
+ ]
+}
+</script>
+<script>
+/* Decision picker (references/decision-picker.js) — inline in the report after the
+ * <script type="application/json" id="decision-data"> block. Needs an empty
+ * <div class="picker-bar" id="picker"></div> where the sticky bar should sit.
+ *
+ * Config, as attributes on the decision-data script tag:
+ *   data-answers-server  server origin            (default http://127.0.0.1:8765)
+ *   data-answers-report  report path under --root (default decision-data "report")
+ *   data-answers-start   start command shown when the server is down (optional)
+ *   data-legacy-keys     comma list of old localStorage keys ({picks,notes}) to import once
+ *
+ * Load: server file -> localStorage mirror -> defaults; newer savedAt wins.
+ * Save: every change, debounced 300 ms, PUT to the server + localStorage mirror.
+ */
+(function () {
+  'use strict';
+  var dataEl = document.getElementById('decision-data');
+  var bar = document.getElementById('picker');
+  if (!dataEl || !bar) return;
+  var data;
+  try { data = JSON.parse(dataEl.textContent); }
+  catch (err) { console.error('decision-data JSON did not parse; picker disabled', err); return; }
+
+  var SERVER = (dataEl.getAttribute('data-answers-server') || 'http://127.0.0.1:8765').replace(/\/+$/, '');
+  var REPORT = dataEl.getAttribute('data-answers-report') || data.report || location.pathname.split('/').pop();
+  var START = dataEl.getAttribute('data-answers-start') || 'node …serve-report.mjs --root …';
+  var LEGACY = (dataEl.getAttribute('data-legacy-keys') || '').split(',').map(function (s) { return s.trim(); }).filter(Boolean);
+  var URL_ANS = SERVER + '/__answers?report=' + encodeURIComponent(REPORT);
+  // The mirror key carries a fingerprint of this report's decisions, so two reports with the same
+  // file name (served from different folders on the same origin) never share saved picks.
+  var KEY; // set below, once the decision list is known
+
+  var all = data.decisions || [];
+  var open = all.filter(function (d) { return d.status === 'open'; });
+  var sorted = open.slice().sort(function (a, b) { return a.n - b.n; });
+  var FP = (function (str) { var h = 5381; for (var i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h.toString(36); })(open.map(function (d) { return d.n + ':' + d.title; }).join('|'));
+  KEY = 'decision-picker:v2:' + REPORT + ':' + FP;
+  if (data.counts && (all.length !== data.counts.total || open.length !== data.counts.open)) console.warn('decision-data counts do not match its entries');
+
+  var state = { picks: {}, notes: {}, savedAt: null };
+  var views = {}, onlyChanged = false, timer = null, retry = null, dirty = false;
+  var server = 'unknown', localOk = storageWorks(), lastSaved = null;
+
+  function clean(s) { return String(s || '').replace(/\s+/g, ' ').trim(); }
+  function isChanged(d) { return state.picks[d.n] !== d.default; }
+  function setDefaults() { open.forEach(function (d) { state.picks[d.n] = d.default; state.notes[d.n] = ''; }); }
+  function storageWorks() { try { localStorage.setItem(KEY + ':probe', '1'); localStorage.removeItem(KEY + ':probe'); return true; } catch (e) { return false; } }
+  function lsGet(k) { try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) { return null; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
+  function newer(a, b) { return (Date.parse(a && a.savedAt) || 0) > (Date.parse(b && b.savedAt) || 0); }
+
+  // Apply a saved doc. A doc from this exact decision set (same fingerprint) matches by title, then n.
+  // A doc from another report or an older revision matches by title only, so stale picks never land
+  // on a different decision that happens to share a number.
+  function apply(doc) {
+    if (!doc) return;
+    var same = doc.fingerprint === FP;
+    setDefaults();
+    var byTitle = {};
+    open.forEach(function (d) { byTitle[d.title] = d; });
+    var set = function (d, pick, note) {
+      if (!d) return;
+      if (d.options.indexOf(pick) !== -1) state.picks[d.n] = pick;
+      if (typeof note === 'string') state.notes[d.n] = note;
+    };
+    if (Array.isArray(doc.decisions)) {
+      doc.decisions.forEach(function (e) { set(byTitle[e.title] || (same ? open.filter(function (d) { return d.n === e.n; })[0] : null), e.pick, e.note); });
+    } else if (same) {
+      open.forEach(function (d) { set(d, doc.picks && doc.picks[d.n], doc.notes && doc.notes[d.n]); });
+    }
+    state.savedAt = doc.savedAt || null;
+  }
+
+  function answerString() {
+    var parts = [], untouched = 0;
+    sorted.forEach(function (d) {
+      var note = clean(state.notes[d.n]);
+      if (isChanged(d) || note) parts.push(d.n + state.picks[d.n] + (note ? '(note: ' + note + ')' : ''));
+      else untouched++;
+    });
+    if (!parts.length) return 'Decisions: all defaults';
+    return 'Decisions: ' + parts.join(' ') + (untouched ? ' — all others default' : '');
+  }
+
+  function snapshot() {
+    var picks = {}, notes = {};
+    sorted.forEach(function (d) { picks[d.n] = state.picks[d.n]; if (clean(state.notes[d.n])) notes[d.n] = clean(state.notes[d.n]); });
+    return {
+      report: REPORT, fingerprint: FP, savedAt: state.savedAt || new Date().toISOString(), answer: answerString(), picks: picks, notes: notes,
+      decisions: sorted.map(function (d) { return { n: d.n, title: d.title, pick: state.picks[d.n], default: d.default, changed: isChanged(d), note: clean(state.notes[d.n]) }; })
+    };
+  }
+
+  // ---- bar ----
+  bar.innerHTML = '';
+  bar.setAttribute('role', 'region');
+  bar.setAttribute('aria-label', 'Your answers');
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text) e.textContent = text; return e; }
+  var row = el('div', 'row'), countEl = el('span', 'picker-count');
+  var filterBtn = el('button', 'pbtn', 'Show only changed'), resetBtn = el('button', 'pbtn', 'Reset to defaults');
+  filterBtn.type = resetBtn.type = 'button';
+  filterBtn.setAttribute('aria-pressed', 'false');
+  row.appendChild(countEl); row.appendChild(filterBtn); row.appendChild(resetBtn);
+  var saveEl = el('p', 'picker-save'), saveText = el('span', 'picker-save-text', 'Connecting to the answers server…');
+  var copyBtn = el('button', 'pbtn', 'Copy answers');
+  copyBtn.type = 'button'; copyBtn.hidden = true;
+  saveEl.setAttribute('role', 'status'); saveEl.setAttribute('aria-live', 'polite');
+  saveEl.appendChild(saveText); saveEl.appendChild(copyBtn);
+  bar.appendChild(row); bar.appendChild(saveEl);
+
+  function showStatus() {
+    var s;
+    if (server === 'up') { s = 'saved'; saveText.textContent = 'Saved to file · ' + (lastSaved || new Date()).toTimeString().slice(0, 8); }
+    else if (server === 'down' && localOk) { s = 'local'; saveText.textContent = 'Server not running — saved in this browser only. Start: ' + START; }
+    else if (server === 'down') { s = 'none'; saveText.textContent = 'Not saved — this viewer blocks storage and the server is not running'; }
+    else s = 'unknown';
+    saveEl.setAttribute('data-state', s);
+    copyBtn.hidden = server !== 'down';
+  }
+
+  function update() {
+    var changed = 0, notes = 0;
+    open.forEach(function (d) {
+      var c = isChanged(d), v = views[d.n];
+      if (c) changed++;
+      if (clean(state.notes[d.n])) notes++;
+      if (!v) return;
+      v.fs.classList.toggle('is-changed', c);
+      v.legend.textContent = 'Your pick · decision ' + d.n + (c ? ' · changed from default ' + d.default : '');
+      v.radios.forEach(function (r) { r.checked = r.value === state.picks[d.n]; });
+      if (v.note.value !== state.notes[d.n]) v.note.value = state.notes[d.n];
+    });
+    countEl.innerHTML = '<strong>' + changed + '</strong> of ' + open.length + ' changed from default' + (notes ? ' · ' + notes + (notes === 1 ? ' note' : ' notes') : '');
+    all.forEach(function (d) {
+      var v = views[d.n];
+      if (v) v.art.hidden = onlyChanged && !(d.status === 'open' && (isChanged(d) || clean(state.notes[d.n])));
+    });
+  }
+
+  // ---- saving ----
+  function markDirty() { state.savedAt = new Date().toISOString(); dirty = true; update(); clearTimeout(timer); timer = setTimeout(flush, 300); }
+
+  function put(doc, keepalive) {
+    return fetch(URL_ANS, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(doc), keepalive: !!keepalive })
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); });
+  }
+
+  function flush() {
+    clearTimeout(timer);
+    var doc = snapshot();
+    localOk = lsSet(KEY, doc);
+    return put(doc).then(function () {
+      dirty = false; server = 'up'; lastSaved = new Date(); stopRetry(); showStatus();
+    }, function (err) {
+      server = 'down'; showStatus(); startRetry();
+      console.info('answers server unreachable; will retry every 10 s', err && err.message);
+    });
+  }
+
+  function getServer() {
+    return fetch(URL_ANS, { cache: 'no-store' }).then(function (r) {
+      if (r.status === 404) return null;
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    });
+  }
+
+  // Reconnect: reconcile with the server copy (newer savedAt wins), then write.
+  function reconnect() {
+    return getServer().then(function (doc) {
+      if (doc && newer(doc, state) && !dirty) { apply(doc); update(); lsSet(KEY, snapshot()); server = 'up'; lastSaved = new Date(Date.parse(doc.savedAt) || Date.now()); stopRetry(); showStatus(); return; }
+      return flush();
+    }, function () { server = 'down'; showStatus(); startRetry(); });
+  }
+  // Every 10 s: retry while down; while up, ping so a stopped server shows within ~10 s.
+  function startRetry() { retry = true; }
+  function stopRetry() { retry = false; }
+  setInterval(function () {
+    if (retry || server !== 'up') return reconnect();
+    fetch(SERVER + '/__health', { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error(); }).catch(function () { server = 'down'; showStatus(); startRetry(); });
+  }, 10000);
+
+  // ---- render picks into the articles ----
+  function render() {
+    all.forEach(function (d) {
+      var art = document.querySelector('article[data-decision="' + d.n + '"]');
+      if (!art) { console.warn('decision-data entry ' + d.n + ' has no article'); return; }
+      var ol = art.querySelector('ol.choices');
+      if (!ol) { console.warn('decision ' + d.n + ' has no ol.choices'); return; }
+      var host = ol.nextElementSibling && ol.nextElementSibling.tagName === 'P' ? ol.nextElementSibling : ol;
+      if (d.status !== 'open') {
+        var p = el('p', 'pick-decided', 'Decided: ' + d.decided + ' · owner choice, read-only');
+        host.insertAdjacentElement('afterend', p);
+        views[d.n] = { art: art };
+        return;
+      }
+      var fs = el('fieldset', 'pick'), legend = el('legend'), opts = el('div', 'pick-opts');
+      fs.appendChild(legend);
+      var radios = d.options.map(function (L) {
+        var id = 'pick-' + d.n + '-' + L, label = el('label'), input = el('input');
+        label.setAttribute('for', id);
+        input.type = 'radio'; input.name = 'pick-' + d.n; input.id = id; input.value = L;
+        input.addEventListener('change', function () { if (input.checked) { state.picks[d.n] = L; markDirty(); } });
+        label.appendChild(input); label.appendChild(document.createTextNode(L));
+        if (L === d.default) label.appendChild(el('span', 'pick-default', 'default'));
+        opts.appendChild(label);
+        return input;
+      });
+      fs.appendChild(opts);
+      var noteWrap = el('div', 'pick-note'), noteLabel = el('label', null, 'Note (optional)'), note = el('input');
+      noteLabel.setAttribute('for', 'note-' + d.n);
+      note.type = 'text'; note.id = 'note-' + d.n; note.maxLength = 300;
+      note.placeholder = 'Condition or comment for decision ' + d.n;
+      note.addEventListener('input', function () { state.notes[d.n] = note.value; markDirty(); });
+      noteWrap.appendChild(noteLabel); noteWrap.appendChild(note); fs.appendChild(noteWrap);
+      host.insertAdjacentElement('afterend', fs);
+      views[d.n] = { art: art, fs: fs, legend: legend, radios: radios, note: note };
+    });
+  }
+
+  // ---- controls ----
+  filterBtn.addEventListener('click', function () { onlyChanged = !onlyChanged; filterBtn.setAttribute('aria-pressed', String(onlyChanged)); update(); });
+  resetBtn.addEventListener('click', function () {
+    var touched = open.some(function (d) { return isChanged(d) || clean(state.notes[d.n]); });
+    if (touched && !window.confirm('Reset all ' + open.length + ' picks to their defaults and clear every note?')) return;
+    setDefaults(); markDirty();
+  });
+  copyBtn.addEventListener('click', function () {
+    var text = answerString();
+    function manual() { window.prompt('Copy your answers (Ctrl+C):', text); }
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { copyBtn.textContent = 'Copied'; setTimeout(function () { copyBtn.textContent = 'Copy answers'; }, 1500); }, manual);
+    else manual();
+  });
+  window.addEventListener('pagehide', function () { if (dirty) { var doc = snapshot(); lsSet(KEY, doc); put(doc, true).catch(function () {}); } });
+
+  // ---- start: server file -> local mirror -> legacy import -> defaults ----
+  setDefaults();
+  render();
+  update();
+  var local = lsGet(KEY);
+  getServer().then(function (doc) { return { ok: true, doc: doc }; }, function () { return { ok: false, doc: null }; }).then(function (res) {
+    server = res.ok ? 'up' : 'down';
+    var legacyDone = lsGet(KEY + ':legacy-imported');
+    if (res.doc && (!local || !newer(local, res.doc))) {
+      apply(res.doc); lsSet(KEY, snapshot());
+      lastSaved = new Date(Date.parse(res.doc.savedAt) || Date.now());
+      update(); showStatus(); return;
+    }
+    if (local) { apply(local); update(); return flush(); }
+    if (!res.doc && !legacyDone) {
+      for (var i = 0; i < LEGACY.length; i++) {
+        var old = lsGet(LEGACY[i]);
+        if (old && old.picks) { apply({ picks: old.picks, notes: old.notes, fingerprint: FP }); lsSet(KEY + ':legacy-imported', LEGACY[i]); state.savedAt = new Date().toISOString(); update(); return flush(); }
+      }
+    }
+    if (res.ok && !res.doc) return flush(); // create the file so the agent can read "all defaults"
+    showStatus(); if (!res.ok) startRetry();
+  });
+})();
+
+</script>
+</body>
+</html>

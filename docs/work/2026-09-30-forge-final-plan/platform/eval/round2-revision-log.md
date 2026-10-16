@@ -1,0 +1,95 @@
+# Platform plan v3 — round-two revision log
+
+Decisions needed: the twelve planning choices remain in [v3, section 10](../platform-plan-v3.md#10-decisions-needed), with an evidence/alternatives/reconsideration trace for every default. No implementation, live operation or publication is authorized by this revision.
+
+**Result:** all eight numbered blocking findings and all eleven numbered non-blocking improvements from the three platform round-two critiques are **ACCEPTED** below. The three decision-reasoning findings describe one shared defect; there are six distinct blocking themes, not eight independent architecture failures. This is a revised proposal, not certification of the proposed APIs.
+
+## Scope, inputs and verification
+
+- Read the complete common.md, north-star.md, revise.md and platform-synthesize.md. North star controls product framing; revise permits exactly two outputs and requires a disposition for every critique item. The ten synthesis sections are preserved.
+- Read the complete current draft and all three platform/eval/round2 critiques. Research/prior-plan verification was delegated under the supplied worker-routing instructions, with read-only ownership; the research worker read platform/P1–P3, research/L1–L5, blocks/B1–B3 and prior plan.md/blocks-plan.md. No worker wrote a file.
+- Revision source facts use origin/master, not this worktree's older HEAD. Local tracked remote and live `git ls-remote origin refs/heads/master` both returned **7d448ec812ef8639790477af07c3c75962173f8a**. Worktree HEAD remains the older package fold (ba56b9201782c4d1246c77bde6380867603184bf). [ran: named readbacks]
+- Draft input SHA-256: **1c263f06c77eba05cb2cca9bb1df531741dc72e51fdaaf744c302aa3f3a9a2a7**, matching the critiques. Critique input digests: platform fit **53ef2ffb3fc506cdb7bd0aa699d6e26c62a9f6655b7ff4ce0107ebbc9ed7d14e**; feasibility/safety **29fd9bda2fee058f6f9701ea0008bcfd046832657a2eea7f471ffbbdc9653fa8**; agent buildability **a9dfa93fbbfb17da35e7e5dec3d06dc330d915540c38e6cb7b0985fd2a5df8ca**. [ran: Get-FileHash]
+- Only platform/platform-plan-v3.md and platform/eval/round2-revision-log.md are written. No implementation, dependency installation, worktree/issue/GitHub mutation, commit, push, browser or Claude invocation belongs to this task. The broader planning/setup/shipping stages were not invoked.
+
+**Evidence labels:** [read] is inspected artifact/source, rung 2; [ran] proves only the named command/probe; [external] is checked primary documentation; [inferred] is a design choice or future proof requirement. A source/GitHub readback is not installed conformance, a live harness result or a release receipt.
+
+### Blocking verification performed before fixing the proposal
+
+| Theme | Verification and result | Scope of evidence |
+| --- | --- | --- |
+| Public injected client absent | Complete v2 ABI/example inspection confirms empty requires and no normative nonempty requirement/binding/client-call/result convention. The promised direct service path was unspecified. [read: v2 §§3.1/3.3/3.12; agent critique blocker 1] | A draft-contract defect; no absence claim about all repository implementations. |
+| Memory producer incomplete | V2's shorthand notes array did not establish the advisor's maxItems/length/required/closed-field constraints. Exact-remote registry probe returned keys value/receipt, empty array value and receipt status ok, no notes. [read; ran: transient Node probe] | Current registry envelope only, not persistent Memory or a future projection. |
+| Payload/runtime mismatch | Exact-remote SkillRuntime: one-change control PASS; 100 changes returned INCOMPLETE/BOUNDED_INPUT_EXCEEDED without handler invocation; maxNodes 400 returned INVALID_LIMITS. [ran: transient Node probe] | Existing runtime coordination boundary, not failure of the unimplemented generic wrapper. |
+| Arbitrary assignability unbounded | V2 allowed rich constraints/local refs while promising static assignability without an inclusion algorithm, recursion budget or UNKNOWN rule. Same JSON type can still differ in count/length/closed fields. [read; inferred] | Contract analysis; the bounded replacement remains to be implemented/tested. |
+| Pre-admission schema processing unbounded | V2 allowed pattern/format/uniqueItems and refs without parse/compile/instance cost ceilings. Opened JSON Schema/Ajv primary security guidance confirming the mechanism risk. [read; external] | The critic's timeout probe remains attributed to that critique; this revision did not claim a Forge exploit or repeat it. |
+| Defaults incomplete | Inspected all twelve v2 choices against critic.md's reasoning requirement; particularly layers, optional budget and cloud/app release labels lacked complete evidence/alternative/reopening traces. [read] | Owner decision-readiness, not evidence that all selected defaults are wrong. |
+
+Native notes mapping was checked at the same source pin: `lib/memory/router.js:264–283,418–451` maps stored key to note.id and stored value through existing toNote rendering to note.note. SQLite read-model/provenance fields were checked at `lib/kernel/sqlite-driver.js:2313–2356`; current entries omit created_at. V3 makes the public projection explicit and preserves provenance without inventing that field. [read: verification worker]
+
+The final direct source check also found that the convenience router recall calls migrateJsonlNotesOnce before reading and flags a full query result conservatively as capped. Section 3.2 therefore reuses its owning read/representation path without implicit migration under memory-read permission, and requests a bounded 101-result lookahead to distinguish exactly 100 from overflow. The 101st result causes whole-result refusal, never truncation; raw read materialization obeys the domain byte budget. This is precision needed by the accepted Memory/client contracts, not a new storage system or an authorized live conversion. [read: git show origin/master:lib/memory/router.js, recall body]
+
+## Platform-fit critique dispositions
+
+Source: [round2-platform-fit.md](round2-platform-fit.md).
+
+| Critique item | Disposition | What changed and evidence |
+| --- | --- | --- |
+| **Blocker 1 — twelve defaults without complete reasoning** | **ACCEPTED** | Section 10 retains the twelve choices and adds one rationale row per default: cited evidence/uncertainty, why A wins over both named alternatives, and the observation/owner requirement that changes it. Budget/calendar/release-label assumptions are explicitly judgments. Verified against the full v2 list and critic.md. |
+| **Improvement 1 — exercise outside bound clients** | **ACCEPTED** | Section 3.1 specifies a full requirement/binding/invoke/result/error contract and outside recallAndAssess handler. Sections 6/7 require a cold author to actually call it and test incompatible/absent/async/denied clients, ignored refusal and explicit restart replacement. Graph-only advisor success cannot substitute. This adds proof of an existing promise, no broad managed-service platform. |
+| **Improvement 2 — schema-check hosted/cloud/app walkthrough** | **ACCEPTED** | Section 3.11 adds named target/workload/grant/event/transfer/refusal contracts, concrete target/grant fixtures, a generated-digest rule and required old/new/refusal rows. Include filtered fields, revoked queued delivery, stale authority generation, unknown optional profile, quota and cross-project denial. Sections 6/7 bind them to the existing local G3/G4/G7 corpus. They prove local contract fit, not live hosted isolation/authentication/durability. |
+
+The positive north-star assessment and staging survive. A live service in 0.1.0 is not required merely to validate future-service contracts. Marketplace review remains distinct from execution admission; demand nominates while proof/support ownership promotes. [read: critique; inferred]
+
+## Feasibility/safety critique dispositions
+
+Source: [round2-feasibility-safety.md](round2-feasibility-safety.md).
+
+| Critique item | Disposition | What changed and evidence |
+| --- | --- | --- |
+| **Blocker 1 — pre-admission schema resource safety** | **ACCEPTED** | Section 3.3 supplies byte/depth/node/ref/default/enum/graph/patch/processing ceilings for discovery, parsing, compilation and actual values. Initially refuse author pattern, format and uniqueItems, recursive refs, aliases and executable keywords. Bounded integer multipleOf avoids unpriced numeric analysis. Termination is accounted work, not an event-loop timer. G3/G4 must prove hostile input refusal without import or stalled service. Verified with the actual v2 allowlist and [JSON Schema security guidance](https://json-schema.org/draft/2020-12/json-schema-validation#name-security-considerations), [Ajv untrusted-schema guidance](https://ajv.js.org/security.html#untrusted-schemas). |
+| **Blocker 2 — defaults lack reasoning** | **ACCEPTED** | Same complete section-10 rationale ledger as the platform finding, with explicit uncertainty/cost and both alternatives for every row. Two worker-days/four owner-hours and 0.2 are hypotheses; no demand/capacity measurement is manufactured. |
+| **Improvement 1 — owner/access forecast ledger** | **ACCEPTED** | Section 8 requires per-stream owner review/integration/rework demand, dependency/wait, named operators and access YES/NO. Unknown is NO until commissioned. Compare demand with committed hours; illustrative 120–180 owner-hours is capacity only. Endorsing a date or broad coupled fan-out requires a fit and commissioned critical lanes; independent scoped work can still proceed. |
+| **Improvement 2 — early connected progress** | **ACCEPTED** | Sections 6/8 align both critical-path descriptions and require one connected non-delivery acceptance/refusal in the generic-runtime pilot before broad reference migration. A stateless-only author success cannot validate authority integration. |
+| **Improvement 3 — qualify guard claims by trusted API threat model** | **ACCEPTED** | Section 3.6 now explicitly says owning APIs retain the invariant checks and local admitted code is trusted to use them. It does not claim containment of ambient process/credential access. Section 7's security proof repeats the qualifier; later hosted containment still requires real isolation evidence. |
+| **Improvement 4 — prototype-safe paths/bounded mappings** | **ACCEPTED** | Section 3.3 requires own-property lookup and null-prototype/equivalent safe maps, no getters/proxies/coercion, inherited-field refusal and magic-key fixtures. Dots/slashes remain RFC 6901 data. The exact-schema mapping/ref limits use the same corpus. No current exploit is asserted. |
+| **Improvement 5 — prerelease compatibility in first pilot** | **ACCEPTED** | Section 6's outside pilot records explicit prerelease opt-in/range (e.g. >=0.1.0-rc.1 <0.2.0) and exact rc identity; stable example range is not treated as RC-compatible. A literal 0.1.0 preliminary tarball is an explicitly identified alternative. Final manifest/locks and fresh exact-byte proof remain required. |
+| **Improvement 6 — bounded current baseline refresh** | **ACCEPTED** | Revision worker freshly re-read Forge-routed GitHub: #582 merged at inspected remote; date-bounded cohort now 29 (0/2/5/12/10); mutation run still failed; #564 still open. Section 8 adds that readback and preserves L3's 28 as collection-time history. Landed worktree safety gets acceptance, not reimplementation. S9's older Kernel/protocol/quarantine findings stay attributed; no issue-status claim is silently upgraded to tested resolution. |
+
+The eight-to-twelve-week allowance remains unendorsed until commissioning/pilot demand makes it defensible. No speed experiment cap excuses missing required evidence, configured mutation checks or safety repairs. [inferred]
+
+## Agent-buildability critique dispositions
+
+Source: [round2-agent-buildability.md](round2-agent-buildability.md).
+
+| Critique item | Disposition | What changed and evidence |
+| --- | --- | --- |
+| **Blocker 1 — callable injected-service contract missing** | **ACCEPTED** | Section 3.1 now defines the nonempty requires entry, exact instance binding, synchronous services[slot].invoke operation, closed OK/INCOMPLETE domain convention, error/readiness/effect checks and host tracking of ignored required-service failures. Native owning clients stay behind that ABI. The cold task must exercise the actual slot. V2's empty requirement example verified the omission. |
+| **Blocker 2 — incomplete Memory producer contract** | **ACCEPTED** | Section 3.2 supplies full recall input/output/Note schemas, count/length/closed-field/required constraints, named projection from native note.id/note.note and preserved raw provenance. Empty success is notes:[]; capped/incomplete, >100, overlong, unknown codec and malformed/extra public fields refuse. Native router and registry shapes were verified separately; no blanket raw value-to-notes cast or durable mutation is proposed. |
+| **Blocker 3 — domain bounds conflict with coordination limits** | **ACCEPTED** | Section 3.4 specifies bounded per-run full-domain storage in the already-planned wrapper and compact host-created ID/digest coordination through SkillRuntime. Preserve 8,192-byte/depth-8/128-node ceilings. Domain values get 2 MiB/depth-16/16,384-node limits and a 16 MiB live run budget. Actual wrapper proof must include 100 changes/100 notes/max-length multi-byte data, one-change control, over-limit/output/forged-ID failures and cleanup. Existing-runtime probes independently reproduced the critique. |
+| **Blocker 4 — unbounded assignability promise** | **ACCEPTED** | Section 3.3 narrows initial direct mapping to canonical resolved rooted-schema identity, with bounded acyclic local ref resolution and no structural widening. Unequal schemas return MAPPING_COMPATIBILITY_NOT_PROVED with generated-schema/explicit projection remedies. Requiredness/fallback remains separate and actual values always validate. V2's shorthand producer/type claim is replaced in section 3.12 by this particular identical-schema proof. |
+| **Blocker 5 — decision-default reasoning** | **ACCEPTED** | Section 10 provides all twelve complete rationale records, including why four layers solve the project/invocation distinction, why the reversible experiment cap is a judgment, and what demand/capacity/security proof changes cloud/hosting order. The shared defect is not counted as twelve independent blockers. |
+| **Improvement 1 — executable ordered author journey** | **ACCEPTED** | Section 3.3 now starts with existing-capability discovery, scaffolds a new manifest, discovers that manifest as data, and only then validates/explains/locks/admits/conforms. Explicit local versus manually preinstalled package prerequisites and a fixture plus structured after-edge repair record remove hidden registration/order steps. Purpose conformance never grants production trust. |
+| **Improvement 2 — SecretRef typing at both boundaries** | **ACCEPTED** | Section 3.3 makes marked wire/handler config locations closed SecretRef objects, not plaintext string/object unions. References survive compile/explain/config; only the granted owning credential edge resolves them. Types/docs/corpus include marked/unmarked/plaintext/missing readiness and redacted failure cases. No credential is read for this revision. |
+| **Improvement 3 — smaller teaching path** | **ACCEPTED** | The generated first-author guide contains manifest/one handler/one composition/fixture/public conformance. Bound-client, reference, hosting/quota, UI-plugin and transfer guides are separate links. Their contracts/proofs remain required; the minimal journey does not demand reading every future-service inventory. |
+
+The prior ABI and attempt-count improvements remain intact: at most two submitted block/config/partial candidates per cold task, a withheld task, unchanged two-harness execution and 30/30 first-config semantic/execution bar plus the separate refusal corpus. No successful runtime or cold-author result is inferred from this added precision. [read: v2 §7.4; inferred]
+
+## Cross-critique integration and limits
+
+| Shared concern | Integrated disposition |
+| --- | --- |
+| Client proof and client semantics | One generic synchronous public invocation convention plus a mandatory outside client-call task; not three separate wrappers. |
+| Memory projection and schema compatibility | One explicitly bounded native projection whose resolved Note/array schemas equal the advisor's; no generic mapping language or field-dropping repair. |
+| Schema safety and static compatibility | One narrower pre-admission dialect/processing budget and exact-identity comparison; no arbitrary schema implication engine. |
+| Domain payload and host evidence | One wrapper-owned bounded domain map, compact coordination and content identities; no increased coordination ceiling or authored approval. |
+| Decision reasoning and forecast | One twelve-row ledger plus owner/access commissioning, replacing scattered implied justifications. |
+| Hosted compatibility | Concrete local schema/corpus proof now; actual isolation/authentication/operations later under named owners. |
+
+The critics' verdicts/scores assess v2 and remain source artifacts; this revision does not manufacture a new SOUND verdict or higher score. Recommendations and owner options are implemented as proposal changes, not executed service commitments. No critique item is rejected or silently dropped.
+
+**Retained release obligations:** ten synthesis sections; one Forge npm package; sole Kernel authority and intact configured gates; independently installed outside package/new capability; two real harnesses; first/second-candidate cold author including a bound-client task; 30/30 first-config semantic validation/execution; G0–G8; six npm environments; seven native binaries; four advertised native harnesses with permitted operators; initial 94-case inventory plus every applicable obligation and at least 50 distinct clean pairs; seven candidate-bound qualifying days; exact-artifact/BOM promotion/readback and origin/claim/recovery safety. These remain future acceptance requirements, not achieved results.
+
+**Document validation:** read back both requested files; check exact numbered section order/ten-line opening, every expected critique disposition, complete JSON examples, executable literal handler fixtures, retained gate/matrix/attempt-count markers, local Markdown links and input hashes. These checks establish the written artifacts' structure/example consistency only. New compiler/wrapper/typed schema engine, service corpus, installed package, native harness, hostile-schema campaign, cold agent/config benchmark, migration and observer proofs remain unrun.
+
+**Confidence:** high in verified current source/status boundaries and complete critique coverage; medium in the proposed minimal contracts until their packed outside/connected pilot; low in owner capacity, timing, first/second-try success, adoption and later cloud/hosting operational results.

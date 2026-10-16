@@ -1,0 +1,323 @@
+{
+  "report": "rebuild-plan",
+  "decisions": [
+    {
+      "n": 1,
+      "title": "Plain names for the building blocks",
+      "section": "2.2",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should the old internal names (Kernel, Contracts, Flow, Shepherd, gate, rails) be replaced by plain names people would guess?",
+      "why": "Block names show up in config, package docs and error messages. Plain names make Forge easier to learn for you, other people and agents, but your existing notes and docs use the old words.",
+      "example": "To set up issue tracking you would configure the 'work' block, not the 'kernel' block. To check a pull request you would run 'forge pr checks', not 'forge shepherd'.",
+      "options": [
+        {"id": "A", "label": "Plain names", "detail": "Core: block, config, template, catalog, state, host, doctor. Blocks: work (issues), memory, context, check, git, pr, github, policy, workflow, skills, project, migrate, plus one block per harness (pi, opencode, codex, claude, cursor, hermes). Kernel, Contracts, Flow, Shepherd, gate and rails stop being product words."},
+        {"id": "B", "label": "Keep the old names as block IDs", "detail": "Commands still use plain nouns (forge issue claim), but the blocks are called kernel, contracts, flow and shepherd."},
+        {"id": "C", "label": "Rename only Kernel and Shepherd", "detail": "Kernel becomes work and Shepherd becomes pr; the other names stay."}
+      ],
+      "default": "A",
+      "recommendation": "A. Each name says what the block owns, and 'Kernel' wrongly suggests an always-on core that also owns workflow.",
+      "change_if": "You value continuity with existing docs and memory notes more than names that are easy to guess.",
+      "technical": "Block IDs follow publisher/name (forge/work). Issue authority moves to forge/work; generic accepted records, events and leases stay in core 'state'; run and step records belong to forge/workflow. Source: naming-and-block-authoring.md section 4 and decisions N1/N2, with the corrected split of runs out of 'work'. The brief leaves block names open (brief.md:36)."
+    },
+    {
+      "n": 2,
+      "title": "Command shape",
+      "section": "2.2",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should commands be the short 'forge <noun> <verb>', or always include the block name?",
+      "why": "This decides what people and agents type. Either way, Forge refuses a block that reuses a noun another block already owns, because the brief says Forge never silently replaces a choice you already made.",
+      "example": "You install a notes block that also claims the noun 'memory'. Under A, Forge refuses it and tells you to rename it in your config (for example to 'alice-notes'). Under B the clash cannot happen, because the commands are 'forge memory memory search' and 'forge alice-notes memory search'.",
+      "options": [
+        {"id": "A", "label": "Short commands; clashes refused", "detail": "'forge issue claim 42' on the command line and 'issue_claim' in MCP. A clash is refused when the block is added, and you fix it with a one-line rename in config. Install order never decides."},
+        {"id": "B", "label": "Always include the block name", "detail": "'forge work issue claim 42'. Longer to type, but clashes cannot happen."}
+      ],
+      "default": "A",
+      "recommendation": "A. It matches what your projects already type, stays short for agents, and makes every clash loud.",
+      "change_if": "Outside blocks turn out to fight over the same nouns often enough that renames become routine.",
+      "technical": "Operation address noun.verb with kebab segments. MCP names are noun_verb, at most 48 characters, because the Claude API forbids dots and hosts add a prefix. Reserved nouns and publishers apply. Names carry no versions: there are per-operation stability tiers and a one-minor-version 'formerly' rename window. Merges naming decisions N3, N4, N5 and N9. A 'first installed wins' option was removed: silent shadowing conflicts with brief.md:52."
+    },
+    {
+      "n": 3,
+      "title": "How many Forge tools agents see through MCP",
+      "section": "5.2",
+      "status": "decided",
+      "decided": "A",
+      "note": "Most agents already use tool search. Applied: harness tool search is relied on to keep context small; the stable-tool budget exists for hosts without tool search and is configurable; catalog_list, catalog_describe and catalog_call stay for everything beyond it.",
+      "question": "Which Forge operations should appear directly as MCP tools in an agent's tool list?",
+      "why": "MCP is required (the brief generates both the command line and MCP from one catalog). The open part is how much to show at once. More tools make every operation easy to reach, but they fill the agent's context and make it worse at picking the right tool.",
+      "example": "With 12 blocks installed there are about 70 operations. Under A, the agent sees up to 40 stable ones plus 3 discovery tools that can reach the rest. Under B, it sees only the 3 discovery tools and looks things up each time.",
+      "options": [
+        {"id": "A", "label": "Stable tools up to a budget, plus discovery tools", "detail": "Stable, admitted, agent-callable operations up to 40, plus catalog_list, catalog_describe and catalog_call for everything else. Human-only operations (admitting code, granting approvals) never appear. Config can pick nouns or switch to read-only."},
+        {"id": "B", "label": "Discovery tools only", "detail": "Just catalog_list, catalog_describe and catalog_call. Smallest context, but one extra step per call."}
+      ],
+      "default": "A",
+      "recommendation": "A. The budget keeps context cost bounded, and the discovery tools keep everything reachable through the same permission checks.",
+      "change_if": "Hosts' tool search makes large tool lists cheap (raise the budget), or measured agent runs show B is just as successful.",
+      "technical": "Tools are generated from the catalog record. Annotations come from declared effects (readOnlyHint, destructiveHint, idempotentHint, openWorldHint). The tools/list order is deterministic per catalog digest, with list_changed notifications. Both the pre-2026 and the 2026-07-28 stateless protocol revisions are negotiated. Pi needs exposure:'direct' for the exposed tools. Merges naming N6 and N12. A 'no MCP' option was removed because brief.md:36 requires a generated MCP surface."
+    },
+    {
+      "n": 4,
+      "title": "Command-line output: machine-first or human-first",
+      "section": "2.1",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should Forge print JSON by default and show human-friendly text only when asked?",
+      "why": "Agents are the main callers, and output that changes with the terminal type has broken things on Windows before. But you also use the command line yourself.",
+      "example": "'forge issue list' prints a JSON envelope. 'forge issue list --format text' prints a table. Under B, the same command prints a table in your terminal and JSON when an agent pipes it.",
+      "options": [
+        {"id": "A", "label": "JSON always; text on request", "detail": "One predictable output everywhere. Add --format text for people."},
+        {"id": "B", "label": "Detect the terminal", "detail": "Text for a human terminal, JSON when piped, with an override flag."},
+        {"id": "C", "label": "Text by default; --json on request", "detail": "Human-first, like most command-line tools."}
+      ],
+      "default": "A",
+      "recommendation": "A. It keeps behaviour identical across harnesses and Windows, which was the top bug source.",
+      "change_if": "You find yourself typing --format text on most commands.",
+      "technical": "Envelope {ok, op, status: OK|FAIL|INCOMPLETE, result|error, warnings[]}, with exit codes 0/1/2/3/4, reconciled with the 05538ad7 regression contract. A generic renderer is used for text; there are no per-command formatters. Naming decision N7."
+    },
+    {
+      "n": 5,
+      "title": "Config file format",
+      "section": "6.2",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should the project config stay a YAML file (.forge/config.yaml), read through one well-maintained library?",
+      "why": "YAML is easy for people and agents to read and was already decided, but Node has no built-in YAML reader, so it costs Forge one runtime library. Node does read plain JSON, but plain JSON has no comments.",
+      "example": "Under A you edit .forge/config.yaml with comments. Under B the file is .forge/config.json with a $schema line, so editors autocomplete keys, but you cannot leave comments in it.",
+      "options": [
+        {"id": "A", "label": "YAML via one library behind an adapter", "detail": "The 'yaml' package in strict mode: no anchors, aliases, merge keys or custom tags, with size and depth limits. Swappable later."},
+        {"id": "B", "label": "Plain JSON", "detail": "Read with Node's built-in JSON parser, no library, free editor validation. No comments, and a format change from your current files."},
+        {"id": "C", "label": "YAML with our own small parser", "detail": "No library, but Forge writes and maintains a parser for the strict subset."}
+      ],
+      "default": "A",
+      "recommendation": "A. The library has had no defects in our history, is actively maintained, sits behind one adapter so a later swap is cheap, and it keeps the decided format.",
+      "change_if": "The library gets a security advisory or a breaking major version, or you prefer a file without comments to having a library (then B).",
+      "technical": "Adapter config-yaml implements the ConfigParser port, with a contract suite shared by any replacement. Plan line 614 fixed YAML; dependencies-and-hooks decision Y (dependencies-and-hooks.md:208-217). JSON with comments (JSONC) is not offered as dependency-free: Node has no JSONC parser, so it would need a library or our own parser, which is option C's cost in another format."
+    },
+    {
+      "n": 7,
+      "title": "Local git hook help (always opt-in)",
+      "section": "6.3",
+      "status": "decided",
+      "decided": "A",
+      "question": "Forge never installs or requires a hook runner and always leaves your own hooks alone. On top of that, how much should it help when you ask for a local git hook?",
+      "why": "Local hooks caused a dozen kinds of failure in the old Forge. Your projects that already use Lefthook, Husky or pre-commit keep them. The question is only what Forge offers when you want Forge's checks wired into a local hook.",
+      "example": "In a project that uses Lefthook, you ask Forge for a pre-push check. Under A, Forge prints the one line to add to your lefthook.yml. Under B, it can also add that line for you after showing the change, and remove it again later.",
+      "options": [
+        {"id": "A", "label": "Point to your hook manager; tiny hook only where none exists", "detail": "Forge detects Lefthook, Husky, pre-commit or existing hooks and prints the line to add to them. Where no hook manager exists, 'forge hook install' writes a hook of at most 10 lines on request. Nothing is ever installed without being asked."},
+        {"id": "B", "label": "A plus editing your hook manager's config on request", "detail": "An adapter adds or removes Forge's entry in lefthook.yml, .husky or .pre-commit-config.yaml, with a preview and a backup, only when you ask. More adapters to maintain."}
+      ],
+      "default": "A",
+      "recommendation": "A for 0.1.0, with B filed as a follow-up. It never touches a hook manager's files, and B can be added later without changing anything else.",
+      "change_if": "Several of your projects want Forge's checks inside their existing hook manager and editing it by hand becomes a chore (then B).",
+      "technical": "The generated hook lives at the path from git rev-parse --git-path hooks, carries a sentinel, backs up any non-Forge hook it would replace, never sets core.hooksPath, and execs 'forge check run --trigger <event>' (catalog operation check.run with declared argument 'trigger'). Install, remove and status are catalog operations hook.install, hook.remove and hook.status in forge/git; installing writes one owned file, running the hook writes no tracked file. Behaviour tests come from #135, #382, #388, #458 and #452 (dependencies-and-hooks.md:139). Default-on and 'never offer' options were removed: brief.md:48 rules out default-on, and brief.md:52 requires an adapter offer when Forge cannot work with a user's choice."
+    },
+    {
+      "n": 8,
+      "title": "An optional 'the new tests catch the bug' check in our delivery template",
+      "section": "3.1",
+      "status": "decided",
+      "decided": "B",
+      "note": "Tests need to be focused on end-to-end success rather than just writing tests. Applied: the optional check proves the end-to-end journey succeeds and the regression is caught, not that tests were written; every lane's acceptance and the 0.1.0 release proof are stated as end-to-end outcomes on the real artifact.",
+      "question": "Should our delivery template offer a check that the new tests fail on the old code and pass on the new code?",
+      "why": "Your projects valued evidence that tests were written to catch the change. The brief says gates judge results, not process, so this check proves the tests catch the change; it does not prove the order they were written in. The old commit-time TDD gate is gone either way.",
+      "example": "Under B, when you switch it on, the pull request check runs the new tests against the base commit (expecting a failure) and against your head commit (expecting a pass), and reports the result. It never blocks a commit on your laptop.",
+      "options": [
+        {"id": "A", "label": "Results only; test-first stays advice", "detail": "The template requires tests passing on the exact commit. Test-first is guidance in the skills."},
+        {"id": "B", "label": "Optional check, off by default", "detail": "A template rule you can switch on per project. It runs wherever your project runs its checks (usually CI on the pull request)."},
+        {"id": "C", "label": "Check on by default in the delivery template", "detail": "Still applies only to projects that import the delivery template."}
+      ],
+      "default": "B",
+      "recommendation": "B. It keeps the evidence your projects valued as an outcome you can choose, without making it the default.",
+      "change_if": "You want every project on the delivery template held to it (C), or nobody turns it on after a release (A).",
+      "technical": "A counterfactual regression check: a policy rule in forge/policy that uses forge/check against base and head. It replaces Product-Suite's tdd-gate hook intent and the old rail.tdd_intent. Projects without the delivery template never see it."
+    },
+    {
+      "n": 9,
+      "title": "File format for blocks other people write",
+      "section": "4",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should outside block authors ship a single CommonJS file for 0.1.0, or may they also ship a modern ES module file?",
+      "why": "The new Forge itself uses modern modules, and most TypeScript authors produce them by default. The old plan fixed a single CommonJS file because its loading and safety checks were already worked out.",
+      "example": "An author's build outputs dist/index.mjs. Under A they add one build flag to also output dist/index.cjs. Under B Forge accepts the .mjs file as is.",
+      "options": [
+        {"id": "A", "label": "CommonJS file for 0.1.0; modules after a proof", "detail": "Keep the decided single .cjs file. Add ES module entries once a test shows they load safely from the captured snapshot on Node 24/26 and Bun."},
+        {"id": "B", "label": "Accept both from 0.1.0", "detail": "A .cjs or a single .mjs, both exporting the same synchronous operations."},
+        {"id": "C", "label": "ES modules only", "detail": "Drop the CommonJS entry."}
+      ],
+      "default": "A",
+      "recommendation": "A. It keeps a decided, safety-reviewed path for the release, and the proof needed for B is small and scheduled in the contract lane.",
+      "change_if": "The loading proof passes early in the contract lane (move to B for 0.1.0).",
+      "technical": "ABI trusted-action-sync/v1: module.exports.operations, a sync handler, and Promise refusal. An ESM entry would load via require(esm) or import() from the immutable snapshot; it must have no top-level await and keep the same refusal and capture semantics. Old decision 1A is kept."
+    },
+    {
+      "n": 10,
+      "title": "What the first working end-to-end slice proves",
+      "section": "9.2",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should the first working slice prove the new building-block path with an outside block, or prove issue tracking first because your projects use it most?",
+      "why": "The first slice sets the order of all later work. Proving the outside-block path first tests the hardest new design early. Proving issues first gives you something useful sooner.",
+      "example": "Under A, in a plain npm project, an agent's call to a small version-bump block is refused until you approve it; then it works from both the command line and MCP, with no Forge core change. Under B, the first thing that works is 'forge issue create' and 'forge issue claim' on the new state store.",
+      "options": [
+        {"id": "A", "label": "Outside block plus project detection first", "detail": "Proves the contract, generated commands, admission, a state record with a refused stale write, and detection of the project's test command, all from the packed package."},
+        {"id": "B", "label": "Issue tracking first", "detail": "Ports the issue block before the outside-block path is complete."},
+        {"id": "C", "label": "Both in one bigger first slice", "detail": "Takes longer before anything runs end to end."}
+      ],
+      "default": "A",
+      "recommendation": "A. It catches contract mistakes before nine lanes build on them, and issue tracking follows immediately after in parallel.",
+      "change_if": "You need the new issue tracker running in your projects before the rest is ready.",
+      "technical": "The M2 slice in plan section 9.2: npm+vitest fixture without Bun; config show lists the detected 'npm test' with its source (detection only; running it joins at M3); an agent call before admission returns ADMISSION_REQUIRED; the human admits; semver bump returns the same result over CLI and MCP; semver.mark with a caller-supplied stale expectRevision returns REVISION_CONFLICT, plus a controlled-interleaving fixture."
+    },
+    {
+      "n": 11,
+      "title": "Minimum Node version for users",
+      "section": "6.1",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should Forge require Node 24.15 or newer, rather than any Node 24?",
+      "why": "Node 24.15 is where Node's built-in database reached release-candidate status, and Forge's state store uses it. It is still a release candidate, not stable, so the store stays behind an adapter either way.",
+      "example": "A user on Node 24.10 runs 'npx forge-workflow'. Under A npm warns that Node 24.15+ is required and the user upgrades within Node 24. Under B it runs on the older, experimental database build.",
+      "options": [
+        {"id": "A", "label": "Node 24.15 or newer, plus Node 26", "detail": "Matches the database's release-candidate status."},
+        {"id": "B", "label": "Node 24.12 or newer, plus Node 26", "detail": "Where running TypeScript became stable; one step lower, with the database still experimental there."}
+      ],
+      "default": "A",
+      "recommendation": "A. Users get the release-candidate database build, and the cost is a minor-version upgrade within Node 24.",
+      "change_if": "One of your projects or a known user is pinned below 24.15.",
+      "technical": "node:sqlite is Stability 1.2 release candidate since 24.15.0 (language-decision.md:71; dependencies-and-hooks.md:50). engines >=24.15. CI matrix Node 24 latest and Node 26. This overturns old decision 41 (existing floor) and moves it toward its option B."
+    },
+    {
+      "n": 12,
+      "title": "How releases are cut and published",
+      "section": "6.1",
+      "status": "decided",
+      "decided": "A",
+      "question": "Which release flow should the new repo use?",
+      "why": "The new repo has no release automation yet. The flow decides how much ceremony each release takes and whether the published package is exactly the one that was tested.",
+      "example": "Under A, you merge a 'release 0.1.1' pull request. CI builds one package file, tests it, publishes it to the 'next' tag with a signed provenance record, installs that exact version back from npm on Node without Bun, and only then moves 'latest'. No password or token is stored.",
+      "options": [
+        {"id": "A", "label": "Version pull request plus automatic publish", "detail": "A version bump PR with a changelog generated from merged pull request titles. CI packs once, tests, publishes that exact file via npm trusted publishing with provenance, then proves the registry copy before promoting the tag."},
+        {"id": "B", "label": "Changesets", "detail": "Contributors add small change notes and a bot opens version PRs; the same publish and registry proof. Adds a development dependency."},
+        {"id": "C", "label": "Manual publish", "detail": "You run the publish yourself after CI is green; the registry proof still runs before the tag moves."}
+      ],
+      "default": "A",
+      "recommendation": "A. It is the least ceremony that still guarantees the tested file is the published file, and it needs no new dependency.",
+      "change_if": "Outside contributors start sending many PRs that each need their own release note (then B).",
+      "technical": "GitHub OIDC trusted publishing with provenance. Exact-tarball BOM; registry readback of integrity, dist-tags and provenance; then a cold-cache install of the exact registry version with normal npm and Bun lifecycle, and 'npx --package forge-workflow@<version> forge' on Node without Bun (threads-ops.md:297). Unique prerelease versions on next/beta. This overturns old decision 42 (keep current automation), keeps old decision 6A (exact-artifact publication) and borrows the TanStack Config pattern."
+    },
+    {
+      "n": 13,
+      "title": "Single-file binary downloads",
+      "section": "7",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should 0.1.0 drop the single-file binary builds of Forge and ship only the npm package?",
+      "why": "The old plan kept 'all existing binary targets', but the binary work was never adopted, and each target needs its own build and runtime test.",
+      "example": "Under A, users install with npm or npx on Node 24+. Under B, a user could also download one 'forge' executable for Windows, macOS or Linux, and we would test each one before every release.",
+      "options": [
+        {"id": "A", "label": "No binaries in 0.1.0", "detail": "npm package only. Add binaries later if someone asks for them."},
+        {"id": "B", "label": "Keep binary targets", "detail": "Build and test the Bun-compiled executables for every release."}
+      ],
+      "default": "A",
+      "recommendation": "A. There is no named user for binaries, and they add release work and test time.",
+      "change_if": "You or a user needs Forge on a machine without Node.",
+      "technical": "Drops build-binary.yml, gen-embedded-assets and the plan section 5 binary row / cut C6 (which retained existing binary targets). Re-admit under the demand-before-breadth rule."
+    },
+    {
+      "n": 14,
+      "title": "Automatic re-running of failed CI checks",
+      "section": "3",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should Forge stop re-running failed CI checks on its own and leave reruns to an explicit request?",
+      "why": "The old automatic rerun never fired or failed with errors, and rerunning until green hides real problems. But flaky infrastructure failures do waste time.",
+      "example": "A pull request check fails with a runner network timeout. Under A, 'forge pr status' reports it as an infrastructure failure, and the agent calls 'forge pr rerun' with that evidence. Under B, Forge reruns it once by itself.",
+      "options": [
+        {"id": "A", "label": "No automatic reruns", "detail": "An explicit rerun operation that records the evidence for why. Repeated failures are quarantined with an issue."},
+        {"id": "B", "label": "One bounded automatic rerun for infrastructure failures", "detail": "The old default: only for clearly classified infrastructure failures, bound to the exact commit."}
+      ],
+      "default": "A",
+      "recommendation": "A. It removes a feature that never worked reliably, and agents can rerun deliberately with evidence.",
+      "change_if": "Infrastructure flakes turn out to cost more agent time than the explicit rerun saves.",
+      "technical": "This overturns old decision 40A. pr.rerun has effects external:github and a required reason/evidence input. The auto-actions Tier-A path is dropped (threads-ops lesson 6)."
+    },
+    {
+      "n": 15,
+      "title": "Mutation testing in our repo",
+      "section": "6.2",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should our new repo drop the mutation-testing tool and instead prove critical fixes with targeted 'remove the fix, the test must fail' checks?",
+      "why": "You had decided to keep a mutation-testing lane. The tool is heavy, needed a disruptive upgrade, and was never fully working, while the fixes that matter most are a short list of race and authority bugs. This concerns only how we test Forge, not users' projects.",
+      "example": "For the expired-lease fix, CI temporarily removes the fix line and confirms the regression test now fails. Under B, a mutation tool also mutates the whole codebase in a separate job.",
+      "options": [
+        {"id": "A", "label": "Targeted remove-the-fix checks only", "detail": "For every authority, concurrency and gate fix. No mutation tool."},
+        {"id": "B", "label": "Keep a mutation-testing job in CI", "detail": "Optional job, with the same targeted checks on top."}
+      ],
+      "default": "A",
+      "recommendation": "A. It proves exactly the tests that guard the costly bugs, without the heavy tool.",
+      "change_if": "Coverage gaps keep letting regressions through in code that has no targeted check.",
+      "technical": "This overturns owner-decided old decision 5A (retain the configured mutation lane). Stryker DROP (dependencies-and-hooks b3); mistakes-ledger rule 7."
+    },
+    {
+      "n": 17,
+      "title": "Is curapod part of the must-migrate set?",
+      "section": "10",
+      "status": "decided",
+      "decided": "A",
+      "question": "Should curapod join the five projects whose safe migration blocks the release?",
+      "why": "curapod uses Forge and has about 101 tracked issues, but it is not on the plan's list of five. If it is left out, its data could be stranded when the old tooling retires.",
+      "example": "Under A, the release cannot ship until curapod's issues, protected-path settings and decision records are backed up, migrated and read back. Under B, it ships without curapod, and the old importer and tooling stay installed until curapod is migrated and read back.",
+      "options": [
+        {"id": "A", "label": "Add it as a sixth must-migrate project", "detail": "Same backups, manifests, readback and rollback proof as the others. Adds about 2-3 agent-days and owner time."},
+        {"id": "B", "label": "Migrate after release", "detail": "The release does not wait. The old importer and toolchain retire only after curapod reads back."},
+        {"id": "C", "label": "Leave it on the old Forge", "detail": "No migration planned; curapod keeps its installed old Forge. The importer retires after the five."}
+      ],
+      "default": "A",
+      "recommendation": "A. It has real tracked data and its own conflicting rule names, so it is exactly the kind of project the migration proof exists for.",
+      "change_if": "curapod is being retired, or it has moved fully to its own decision records and no longer needs the tracker.",
+      "technical": "About 101 issues in .git/forge/kernel.sqlite; tracked .forge/kernel/issues.jsonl is stale (84 vs 101). It has its own rail.* IDs that collide, D-NNN decision records (kept as its authority), and a repo moved to litemed-tech/curapod (threads-consumers.md:27). The plan's 'selected migration set' (section 10) is the five plus curapod under A; release, retirement, backups and rollback all reference that one set."
+    },
+    {
+      "n": 18,
+      "title": "What to do with the old Forge backlog",
+      "section": "10",
+      "status": "decided",
+      "decided": "B",
+      "question": "When the new repo starts tracking its own work, how should the old repo's 1,659 issues (857 open, many stale) move over?",
+      "why": "Carrying everything keeps full history but brings a backlog nobody can sort. Starting fresh is clean but loses easy access to useful open work. No data is deleted either way, because the old store stays backed up.",
+      "example": "Under A, all 1,659 issues move and Forge shows you the open issues untouched for 60 days; only the ones you pick are closed, each with a note. Under B, only open issues touched recently move, the rest stay readable by ID in an archive, and links from moved issues to archived ones are kept.",
+      "options": [
+        {"id": "A", "label": "Move everything; you pick stale ones to close", "detail": "Full history in the new tracker. A stale list is shown; nothing is closed by age alone."},
+        {"id": "B", "label": "Move recent open issues; archive the rest", "detail": "The new tracker starts small. Archived issues stay readable by ID, and dependency links to them are kept, not dropped."},
+        {"id": "C", "label": "Start fresh; archive everything", "detail": "File new issues as work comes up. The archive stays readable by ID."}
+      ],
+      "default": "B",
+      "recommendation": "B. The rebuild changes most of what those issues describe. Moving only live work keeps the new tracker useful, and the archive keeps every record and link.",
+      "change_if": "You rely on searching old closed issues day to day (then A).",
+      "technical": "Old store: kernel_issues 1659, kernel_events 8418, kernel_comments 1918, kernel_claims 464 (plan:1892-1899); 414 open older than August 2026 (mistakes-ledger.md:22). Migration preservation (every record kept in the backup and archive) is separate from this triage choice. Bootstrap tracking stays in the old Kernel until the self-hosting check."
+    },
+    {
+      "n": 19,
+      "title": "How many lanes run at once",
+      "section": "9.1",
+      "status": "decided",
+      "decided": "A",
+      "question": "How many parallel work lanes should run at the same time after the core design is locked?",
+      "why": "More lanes finish sooner but need more of your review time and cause more merge conflicts in shared files. Fewer lanes are calmer but take longer. This is a staffing guess, not a delivery date.",
+      "example": "Under A, about 4-5 lanes run at once and the estimate is about 9-14 weeks. Under B, 3 lanes run and it is about 10-15 weeks, with fewer reviews landing at the same time.",
+      "options": [
+        {"id": "A", "label": "4-5 lanes at once", "detail": "Up to 9 lanes are startable after the first working slice; at most 3 merges queue at a time."},
+        {"id": "B", "label": "3 lanes at once", "detail": "Slower, lighter on your review time."},
+        {"id": "C", "label": "6 or more lanes at once", "detail": "Fastest on paper; review and conflicts become the limit."}
+      ],
+      "default": "A",
+      "recommendation": "A. The critical path limits the gain beyond 5 lanes, and shared-file conflicts stay manageable with single owners.",
+      "change_if": "You can give less than about 15 focused hours a week to reviews and approvals (then B).",
+      "technical": "Critical path from the section 12 earliest-start table: L0, L1, L5, M2, M3 (L7/L8/L11 plus integration), L14 converter, L14 cutover, L15 tail, about 34-52 agent-days. Throughput is about 5 agent-days per lane per week, so the calendar is max(path, throughput) + 2-3 weeks. Conflict hot spots are migrations/state driver, schemas and ports, package.json/exports, and the assembly list, each single-owner."
+    }
+  ]
+}
