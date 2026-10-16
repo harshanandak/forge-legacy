@@ -355,6 +355,7 @@ describe('CI Workflow Configuration', () => {
       'coverage',
       'e2e',
       'doc-assertions',
+      'repository-outcomes',
     ];
 
     function extractRunScript(jobName, stepName) {
@@ -476,7 +477,8 @@ describe('CI Workflow Configuration', () => {
 
     test('Tests runs on every pull request: no top-level PR paths filter', () => {
       expect(triggers).toHaveProperty('pull_request');
-      expect(triggers.pull_request).toBeNull();
+      expect(triggers.pull_request.paths).toBeUndefined();
+      expect(triggers.pull_request.types).toEqual(['opened', 'synchronize', 'reopened', 'ready_for_review']);
     });
 
     test('the classifier publishes tests_relevant and fails safe to true', () => {
@@ -913,15 +915,9 @@ describe('CI Workflow Configuration', () => {
       }, 30_000);
     }
 
-    test('installs the Git hooks and fails closed when the pre-commit hook is missing', () => {
-      const install = stepNamed('Install Git hooks');
-      expect(install.run).toContain('lefthook install');
-      expect(install.run).toContain('test -s .git/hooks/pre-commit');
-      const names = job.steps.map((step) => step.name);
-      expect(names.indexOf('Install Git hooks')).toBeLessThan(names.indexOf('Open Bun pin PR'));
-      const commands = job.steps.map((step) => step.run || '').join('\n');
-      expect(commands).not.toMatch(/--no-verify|LEFTHOOK=0|LEFTHOOK: ?'?0/);
-      expect(JSON.stringify(job.env || {})).not.toContain('LEFTHOOK');
+    test('does not install local Git hooks in the Bun bump job', () => {
+      expect(job.steps.some(step => step.name === 'Install Git hooks')).toBe(false);
+      expect(job.steps.map(step => step.run || '').join('\n')).not.toContain('lefthook install');
     });
 
     test('compares the latest stable Bun with the pin and bumps only when newer', () => {

@@ -135,7 +135,6 @@ const MUST_NOT_SHIP = [
   'CHANGELOG.md',
   'QUICKSTART.md',
   'install.sh',
-  'lefthook.yml',
   '.mcp.json.example',
   '.github/PLUGIN_TEMPLATE.json',
   '.claude/rules/review-process.md',

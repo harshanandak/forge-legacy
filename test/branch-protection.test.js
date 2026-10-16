@@ -244,12 +244,5 @@ describe('scripts/branch-protection.js', () => {
     });
   });
 
-  describe('Integration with lefthook.yml', () => {
-    test('lefthook.yml should use node to execute script', () => {
-      const lefthookPath = path.join(__dirname, '..', 'lefthook.yml');
-      const content = fs.readFileSync(lefthookPath, 'utf-8');
-      expect(content.includes('node scripts/branch-protection.js') ||
-        content.includes('node ./scripts/branch-protection.js')).toBeTruthy();
-    });
-  });
+
 });

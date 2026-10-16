@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **CI is the gate for this repository; local git hooks are gone.** The repo no longer installs Lefthook or Husky (config, launchers, dev dependency and `prepare` installer removed). Skill-mirror parity, D20 audit freshness and the conventional PR title now run in CI as the `repository-outcomes` job, which feeds the required CI Gate; lint and tests already ran there. The commit-time TDD gate, team-sync, auto-backing-issue and writer-receipt hooks are dropped. Existing clones should run `lefthook uninstall` once. What `forge setup` installs in other projects is unchanged. (PR #609)
+
 - **Forge ships as one package; contracts, Flow and Memory are internal modules.** The former `@forge/contracts`, `@forge/flow` and `@forge/memory` workspaces now live in `lib/contracts`, `lib/flow` and `lib/memory-core`, required relatively. `forge-workflow` no longer bundles them as nested packages, so the tarball carries one copy of each (it carried three copies of the contracts code) and has no `node_modules/@forge` entries. The three names were never published to npm on their own. (PR #601, issue `ba4f4d2b`)
 
 - **BREAKING: Node.js 22 is no longer supported; Forge requires Node.js >= 24. CI tests Node 24 and 26.** The `engines.node` field of `forge-workflow` is now `>=24.0.0`, and `forge setup` prerequisite checks reject older Node.js with an upgrade message. (issue `5d745884`)

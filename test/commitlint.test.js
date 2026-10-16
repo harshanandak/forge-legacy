@@ -1,11 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
-const { describe, test, expect } = require('bun:test');
+const { describe, test, expect } = require('bun:test');
+
 
 describe('Commitlint configuration', () => {
   const configPath = path.join(__dirname, '..', '.commitlintrc.json');
   const packagePath = path.join(__dirname, '..', 'package.json');
-  const lefthookPath = path.join(__dirname, '..', 'lefthook.yml');
 
   describe('Configuration file', () => {
     test('should exist', () => {
@@ -45,36 +45,6 @@ describe('Commitlint configuration', () => {
 
       expect(hasCliDep).toBeTruthy();
       expect(hasConfigDep).toBeTruthy();
-    });
-  });
-
-  describe('Lefthook integration', () => {
-    test('should have commit-msg hook', () => {
-      const content = fs.readFileSync(lefthookPath, 'utf-8');
-
-      // Should have commit-msg hook configured
-      expect(content.includes('commit-msg')).toBeTruthy();
-    });
-
-    test('should run commitlint in commit-msg hook', () => {
-      const content = fs.readFileSync(lefthookPath, 'utf-8');
-
-      // Should invoke commitlint
-      const hasCommitlint = content.includes('commitlint') || content.includes('@commitlint/cli');
-      expect(hasCommitlint).toBeTruthy();
-    });
-
-    test('should use --edit flag for commit message file', () => {
-      const content = fs.readFileSync(lefthookPath, 'utf-8');
-
-      // Should use --edit to read from commit message file
-      if (content.includes('commitlint')) {
-        const hasEditFlag = content.includes('--edit') || content.includes('{1}');
-        expect(hasEditFlag).toBeTruthy();
-      } else {
-        // Skip if commitlint not configured yet
-        return;
-      }
     });
   });
 

@@ -3,11 +3,9 @@ const fs = require('node:fs');
 const path = require('node:path');
 
 const forgePath = path.join(__dirname, '..', 'bin', 'forge.js');
-const lefthookPath = path.join(__dirname, '..', 'lefthook.yml');
 const mcpPath = path.join(__dirname, '..', '.mcp.json.example');
 
 const forgeSource = fs.readFileSync(forgePath, 'utf8');
-const lefthookSource = fs.readFileSync(lefthookPath, 'utf8');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // forge-k6p: autoInstallLefthook must use PKG_MANAGER, not hardcoded bun
@@ -92,36 +90,11 @@ describe('forge-4zz: Post-install verification', () => {
 // ─────────────────────────────────────────────────────────────────────────────
 // forge-0xb: lefthook.yml must use npx, not bunx
 // ─────────────────────────────────────────────────────────────────────────────
-describe('forge-0xb: lefthook.yml uses npx not bunx', () => {
-  test('lefthook.yml commit-msg should not use bunx', () => {
-    expect(!lefthookSource.includes('bunx commitlint')).toBeTruthy();
-  });
-
-  test('lefthook.yml pre-push lint should not use bunx', () => {
-    expect(!lefthookSource.includes('bunx eslint')).toBeTruthy();
-  });
-
-  test('lefthook.yml commit-msg should delegate to scripts/commitlint.js', () => {
-    expect(lefthookSource.includes('node scripts/commitlint.js')).toBeTruthy();
-  });
-
-  test('lefthook.yml pre-push lint should delegate to scripts/lint.js', () => {
-    expect(lefthookSource.includes('node scripts/lint.js')).toBeTruthy();
-  });
-});
 
 // ─────────────────────────────────────────────────────────────────────────────
 // forge-cvr: pre-push hooks must not use bash-only syntax
 // ─────────────────────────────────────────────────────────────────────────────
 describe('forge-cvr: pre-push hooks cross-platform', () => {
-  test('lefthook.yml pre-push lint should not use bash if [ $? syntax', () => {
-    expect(!lefthookSource.includes('if [ $?')).toBeTruthy();
-  });
-
-  test('lefthook.yml test detection should not use bash command -v syntax', () => {
-    expect(!lefthookSource.includes('command -v bun')).toBeTruthy();
-  });
-
   test('scripts/lint.js should exist for cross-platform lint', () => {
     const lintScriptPath = path.join(__dirname, '..', 'scripts', 'lint.js');
     expect(fs.existsSync(lintScriptPath)).toBeTruthy();
