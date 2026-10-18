@@ -23,7 +23,6 @@
     "prebuild": "node scripts/gen-command-manifest.js",
     "lint": "eslint . --max-warnings 0",
     "check": "node scripts/validate.js",
-    "prepare": "node -e \"process.exit(process.env.npm_command === 'pack' ? 0 : 1)\" || lefthook install || echo 'Note: lefthook not installed. Git hooks disabled. Run: bun add -d lefthook'",
     "setup": "node ./bin/forge.js setup",
     "help": "node ./bin/forge.js --help",
     "gen:assets": "bun scripts/gen-embedded-assets.mjs",
@@ -57,8 +56,7 @@
     "c8": "^12.0.0",
     "eslint": "^10.0.2",
     "eslint-plugin-sonarjs": "^4.1.0",
-    "globals": "^17.3.0",
-    "lefthook": "^2.1.4"
+    "globals": "^17.3.0"
   },
   "keywords": [
     "ai",

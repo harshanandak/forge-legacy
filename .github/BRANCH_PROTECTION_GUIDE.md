@@ -608,17 +608,13 @@ Get API key at: https://app.greptile.com/settings/api
 
 ---
 
-## Integration with Lefthook
+## Repository CI gate
 
-Branch protection works with Lefthook hooks:
-
-| Layer | Check | Enforced By |
-|-------|-------|-------------|
-| Local | TDD, ESLint, Tests | Lefthook pre-push |
-| CI/CD | Tests, ESLint, Security, Greptile | GitHub Actions |
-| Merge | Reviews, Comments, History, Score ≥ 4.0 | Branch Protection |
-
-**Result**: Triple-layer quality enforcement with AI-powered review
+Forge's own repository installs no local git hooks. Required GitHub checks judge
+the PR outcome, and GitHub branch protection controls updates to `master`.
+Lint and tests run in Actions; the Tests workflow also checks generated skill
+parity, audit freshness, lockfile consistency and the conventional PR title.
+Local `forge push` validation is optional; plain `git push` publishes the branch.
 
 ---
 

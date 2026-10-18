@@ -4,7 +4,13 @@ Forge validation is evidence, not a slogan. Record the command, result, and fail
 
 ## Project Validation
 
-In this repository:
+In this repository, CI on the PR is the merge gate. No local git hooks are installed.
+Plain `git push` publishes without local validation. `forge push` remains an optional
+explicit branch/lint/test check (`--quick` omits tests). Consumer setup behavior is
+unchanged. Existing developers should run `lefthook uninstall` once after merging
+the hook removal so old shared `.git/hooks` shims do not call a missing config.
+
+For optional local validation:
 
 ```bash
 bun run check

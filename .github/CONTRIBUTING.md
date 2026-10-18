@@ -41,18 +41,21 @@ Quick steps:
 3. Test: `bunx forge setup --agents your-agent`
 4. Submit PR
 
-## TDD Requirements
+## Validation
 
-Pre-commit hook enforces TDD:
-- Source files need corresponding test files
-- Do not use `--no-verify`, `LEFTHOOK=0`, `HUSKY=0`, or hook removal to bypass checks. Agents are forbidden from bypassing hooks unless the user explicitly authorizes a specific audited Forge bypass event; CI still runs required checks.
-- See [.forge/hooks/check-tdd.js](../.forge/hooks/check-tdd.js)
+CI on the PR is the gate. This repository installs no local git hooks. Write tests
+for changed behavior and run `bun run lint` and relevant tests before publishing
+with plain `git push`. `forge push` is an optional explicit local lint/test runner;
+`forge push --quick` omits its test step. CI still runs the required PR checks.
+
+After updating an existing checkout, run `lefthook uninstall` (or remove the old
+`.git/hooks` shims) once. Consumer projects still use the existing setup behavior.
 
 ## Pull Request Process
 
 1. Fork the repo and create your branch (see naming above)
 2. Make changes following branch naming conventions
-3. Ensure tests pass and TDD hook is satisfied
+3. Ensure relevant tests and lint pass
 4. Run `/validate` to validate (type check, lint, tests, security)
 5. Submit PR with clear description
 6. Address review feedback

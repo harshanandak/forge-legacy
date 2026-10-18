@@ -187,37 +187,11 @@ describe("standalone forge package", () => {
     expect(parsePackOutput('sync hooks: ok\n[{"filename":"forge.tgz"}]\n')[0].filename).toBe("forge.tgz");
   });
 
-  test("root prepare skips package packing and retains development hook setup", () => {
-    const temporary = fs.mkdtempSync(path.join(fs.realpathSync.native(os.tmpdir()), "forge prepare-"));
-    created.push(temporary);
-    const sentinel = path.join(temporary, "lefthook-called");
-    const mock = path.join(temporary, process.platform === "win32" ? "lefthook.cmd" : "lefthook");
-    fs.writeFileSync(mock, process.platform === "win32"
-      ? '@echo off\r\n>"%FORGE_PREPARE_SENTINEL%" echo called\r\n'
-      : '#!/bin/sh\nprintf called > "$FORGE_PREPARE_SENTINEL"\n');
-    if (process.platform !== "win32") fs.chmodSync(mock, 0o755);
+  test("root package has no hook installation lifecycle", () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, "package.json"), "utf8"));
-    const pathKey = Object.keys(process.env).find((key) => key.toLowerCase() === "path") || "PATH";
-    const runPrepare = (npmCommand) => spawnSync(manifest.scripts.prepare, {
-      cwd: ROOT,
-      encoding: "utf8",
-      shell: true,
-      env: {
-        ...process.env,
-        [pathKey]: [temporary, process.env[pathKey]].filter(Boolean).join(path.delimiter),
-        FORGE_PREPARE_SENTINEL: sentinel,
-        npm_command: npmCommand,
-      },
-    });
-
-    const development = runPrepare("install");
-    expect(development.status, development.stderr).toBe(0);
-    expect(fs.existsSync(sentinel)).toBeTrue();
-    fs.rmSync(sentinel);
-
-    const packing = runPrepare("pack");
-    expect(packing.status, packing.stderr).toBe(0);
-    expect(fs.existsSync(sentinel)).toBeFalse();
+    expect(manifest.scripts.prepare).toBeUndefined();
+    expect(manifest.scripts.postinstall).toBeUndefined();
+    expect(manifest.devDependencies.lefthook).toBeUndefined();
   });
 
   test("exact version aliases exit before loading the command graph", () => {
