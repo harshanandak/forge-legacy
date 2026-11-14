@@ -82,3 +82,9 @@ test('reports an all-skipped suite as skipped rather than passed', async () => {
 		expect(result.message).not.toContain('tests passed');
 	});
 });
+
+test('parses long malformed Vitest summaries without backtracking', () => {
+	const start = performance.now();
+	expect(parseTestCounts(`Tests  ${'1'.repeat(60000)} pending`)).toMatchObject({ passed: 0, failed: 0, total: 0 });
+	expect(performance.now() - start).toBeLessThan(1000);
+});
