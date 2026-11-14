@@ -74,3 +74,11 @@ test('does not skip reported errors when zero tests ran', async () => {
 		expect(result.skipped).not.toBe(true);
 	});
 });
+
+test('reports an all-skipped suite as skipped rather than passed', async () => {
+	await project({}, async root => {
+		const result = await runAllTests(() => 'Tests  3 skipped (3)', root);
+		expect(result.skipped).toBe(true);
+		expect(result.message).not.toContain('tests passed');
+	});
+});

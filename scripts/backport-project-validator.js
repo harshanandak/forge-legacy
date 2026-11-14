@@ -24,7 +24,7 @@ function backportProjectValidator(original) {
 		'runProjectTests(exec, rootDir, { ...getExecOptions(), cwd: rootDir })');
 	source = replaceOnce(source, 'const { passed, failed, skipped, total, testsFound } = parseTestCounts(result);',
 		'const { passed, failed, skipped, errors, total, testsFound } = parseTestCounts(result);');
-	source = replaceOnce(source, 'if (!testsFound) {', 'if (!testsFound && failed === 0 && errors === 0) {');
+	source = replaceOnce(source, 'if (!testsFound) {', 'if (passed + failed + errors === 0) {');
 	source = replaceOnce(source, 'success: failed === 0,', 'success: failed === 0 && errors === 0,');
 	source = replaceOnce(source, 'message: failed === 0\n', 'message: failed === 0 && errors === 0\n');
 	const start = source.indexOf('async function runAllTests(');

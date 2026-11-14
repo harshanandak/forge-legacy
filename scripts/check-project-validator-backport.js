@@ -45,6 +45,9 @@ async function checkBackport(validatorPath, { installed = false } = {}) {
 		const zero = await runAllTests(() => '# tests 0\n# pass 0\n# fail 0', root);
 		assert.equal(zero.testsFound, false);
 		assert.equal(zero.skipped, true);
+		const allSkipped = await runAllTests(() => 'Tests  3 skipped (3)', root);
+		assert.equal(allSkipped.skipped, true);
+		assert.ok(!allSkipped.message.includes('tests passed'));
 		const errors = await runAllTests(() => '0 pass\n0 fail\n1 error\nRan 0 tests', root);
 		assert.equal(errors.success, false);
 		assert.notEqual(errors.skipped, true);
