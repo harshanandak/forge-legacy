@@ -1,12 +1,12 @@
 {
   "total": {
-    "tarball": 1320089,
-    "unpacked": 4805641,
-    "files": 454
+    "tarball": 1328975,
+    "unpacked": 4834170,
+    "files": 457
   },
   "blocks": {
     "cli": {
-      "bytes": 1127119,
+      "bytes": 1137448,
       "files": 73
     },
     "contracts": {
@@ -14,7 +14,7 @@
       "files": 40
     },
     "docs": {
-      "bytes": 86059,
+      "bytes": 85207,
       "files": 7
     },
     "flow": {
@@ -26,15 +26,15 @@
       "files": 22
     },
     "lib": {
-      "bytes": 1660497,
-      "files": 144
+      "bytes": 1679360,
+      "files": 147
     },
     "memory-core": {
       "bytes": 89012,
       "files": 6
     },
     "meta": {
-      "bytes": 25101,
+      "bytes": 24812,
       "files": 3
     },
     "nested-deps": {
@@ -50,7 +50,7 @@
       "files": 17
     },
     "scripts": {
-      "bytes": 371634,
+      "bytes": 372112,
       "files": 42
     },
     "skills": {

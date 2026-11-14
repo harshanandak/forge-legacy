@@ -451,8 +451,9 @@ describe('Validate Command - Validation Orchestration', () => {
 			const source = fs.readFileSync(path.join(__dirname, '..', '..', 'lib', 'commands', 'validate.js'), 'utf8');
 			expect(source).toMatch(/VALIDATION_COMMAND_TIMEOUT_MS\s*=\s*600000/);
 			expect(source).toMatch(/timeout:\s*fullSuite\s*\?\s*FULL_SUITE_TIMEOUT_MS\s*:\s*VALIDATION_COMMAND_TIMEOUT_MS/);
-			// External repositories retain the raw Bun fallback and its per-test timeout.
-			expect(source).toMatch(/\[\s*'test'\s*,\s*'--timeout'\s*,\s*'30000'\s*\]/);
+			const projectRunner = fs.readFileSync(path.join(__dirname, '..', '..', 'lib', 'project-test-runner.js'), 'utf8');
+			expect(source).toContain('runProjectTests(exec, rootDir, execOptions)');
+			expect(projectRunner).toMatch(/\[\s*'test'\s*,\s*'--timeout'\s*,\s*'30000'\s*\]/);
 			expect(source).not.toContain('timed out after 2 minutes');
 		});
 
@@ -1336,7 +1337,7 @@ describe('Validate Command - Validation Orchestration', () => {
 			try {
 				fs.writeFileSync(
 					path.join(rootDir, 'root-dir.test.js'),
-					"import { expect, test } from 'bun:test'; test('rootDir', () => { console.log('1 pass\\n0 fail\\nRan 1 tests across 1 file.'); expect(true).toBe(true); });\n",
+					"import { expect, test } from 'bun:test'; test('rootDir', () => { expect(true).toBe(true); });\n",
 				);
 				const result = await executeValidate({
 					rootDir,
